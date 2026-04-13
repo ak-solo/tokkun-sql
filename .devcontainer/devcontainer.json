@@ -25,6 +25,7 @@
           }
         ],
         "sqltools.autoOpenSessionFiles": false,
+        "sqltools.autoConnect": true,
         "editor.defaultFormatter": null,
         "[sql]": {
           "editor.wordWrap": "on"
