@@ -1,0 +1,34 @@
+{
+  "name": "tokkun-sql",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "psql \"$DATABASE_URL\" -c '\\dt' && echo '✓ DB の準備ができました'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg"
+      ],
+      "settings": {
+        "sqltools.connections": [
+          {
+            "name": "tokkun-sql",
+            "driver": "PostgreSQL",
+            "server": "db",
+            "port": 5432,
+            "database": "tokkun_sql",
+            "username": "postgres",
+            "password": "postgres",
+            "previewLimit": 100
+          }
+        ],
+        "sqltools.autoOpenSessionFiles": false,
+        "editor.defaultFormatter": null,
+        "[sql]": {
+          "editor.wordWrap": "on"
+        }
+      }
+    }
+  }
+}

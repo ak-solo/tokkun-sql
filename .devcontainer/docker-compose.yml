@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/tokkun_sql
+      PGPASSWORD: postgres
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sleep infinity
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: tokkun_sql
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ../init:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tokkun_sql"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
