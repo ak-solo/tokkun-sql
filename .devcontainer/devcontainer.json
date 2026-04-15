@@ -9,7 +9,7 @@
       "extensions": [
         "mtxr.sqltools",
         "mtxr.sqltools-driver-pg",
-        "cweijan.vscode-database-client2"
+        "inferrinizzard.prettier-sql-vscode"
       ],
       "settings": {
         "sqltools.connections": [
@@ -28,7 +28,8 @@
         "sqltools.autoConnect": true,
         "editor.defaultFormatter": null,
         "[sql]": {
-          "editor.wordWrap": "on"
+          "editor.wordWrap": "on",
+          "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
         }
       }
     }
