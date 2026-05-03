@@ -12,7 +12,7 @@ PostgreSQL を使った初学者向け SQL 学習教材。
 1. docs/ の README（基礎説明 + 問題文）を読む
 2. playground/scratch.sql で自由にクエリを試す
 3. exercises/chapterXX/exYY.sql に回答を書く
-4. psql でクエリを実行し、docs/ の期待結果と見比べる
+4. bin/check.sh で自動テストを実行して正誤を確認する
 ```
 
 ---
@@ -36,6 +36,12 @@ tokkun-sql/
 │   └── 01_seed.sql         # テストデータ（devcontainer 起動時に自動実行）
 ├── playground/
 │   └── scratch.sql         # 自由に試せるスクラッチ領域
+├── bin/
+│   └── check.sh            # 自動テストランナー
+├── tests/
+│   ├── ref/chapterXX/      # 正解SQL（SELECT系チャプター）
+│   ├── verify/chapter07/   # DML後の状態確認クエリ
+│   └── expected/chapter07/ # DML後の期待値CSV
 ├── .devcontainer/
 │   ├── devcontainer.json
 │   ├── docker-compose.yml  # app コンテナ + PostgreSQL コンテナ
@@ -143,6 +149,29 @@ psql "$DATABASE_URL" -f playground/scratch.sql
 # 対話モードで接続する
 psql "$DATABASE_URL"
 ```
+
+## 自動テスト
+
+```bash
+# 全チャプターをテスト
+bin/check.sh
+
+# 1チャプターだけテスト
+bin/check.sh chapter01
+
+# 1問だけテスト
+bin/check.sh chapter01/ex01
+```
+
+### テストの仕組み
+
+| チャプター | テスト方式 |
+|-----------|----------|
+| 01〜06, 09 | 学習者SQLと正解SQLの出力を比較（行の順序は問わない） |
+| 07 (DML)  | DBリセット → 学習者SQL実行 → 状態確認クエリで検証 |
+| 08 (DDL)  | 自動テスト対象外。`\d テーブル名` で手動確認 |
+
+> **注意:** chapter03 の ORDER BY（並び順）は自動テストで検証されません。出力の行セットが正しいかのみ確認します。
 
 ## Git コミット方針
 
