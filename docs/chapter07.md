@@ -22,7 +22,7 @@
 
 ```sql
 INSERT INTO employees (name, dept_id, salary, hire_date)
-VALUES ('Ken', 2, 53000, '2024-04-01');
+VALUES ('健一', 2, 53000, '2024-04-01');
 ```
 
 `id` は `SERIAL` なので省略します。`manager_id` を省略すると NULL が入ります。
@@ -31,8 +31,8 @@ VALUES ('Ken', 2, 53000, '2024-04-01');
 
 ```sql
 INSERT INTO employees (name, dept_id, salary, hire_date) VALUES
-    ('Ken',  2, 53000, '2024-04-01'),
-    ('Luna', 3, 62000, '2024-07-01');
+    ('健一', 2, 53000, '2024-04-01'),
+    ('麻衣', 3, 62000, '2024-07-01');
 ```
 
 ### 2. UPDATE
@@ -69,7 +69,7 @@ DELETE FROM employees WHERE id = 8;
 
 ```sql
 INSERT INTO employees (name, dept_id, salary, hire_date)
-VALUES ('Ken', 2, 53000, '2024-04-01')
+VALUES ('健一', 2, 53000, '2024-04-01')
 RETURNING id, name;
 ```
 
@@ -104,7 +104,7 @@ ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
 
 | カラム    | 値           |
 |----------|-------------|
-| name     | 'Ken'        |
+| name     | '健一'        |
 | dept_id  | 2            |
 | salary   | 53000        |
 | hire_date | '2024-04-01' |
@@ -113,7 +113,7 @@ ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
 
 | id | name | dept_id | salary | hire_date  | manager_id |
 |----|------|---------|--------|------------|------------|
-| 11 | Ken  | 2       | 53000  | 2024-04-01 | NULL       |
+| 11 | 健一 | 2       | 53000  | 2024-04-01 | NULL       |
 
 > `id` は自動採番なので 11 になります（他の INSERT を実行済みの場合は異なる可能性があります）。
 
@@ -127,7 +127,7 @@ ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
 
 | カラム    | 値           |
 |----------|-------------|
-| name     | 'Luna'       |
+| name     | '麻衣'        |
 | dept_id  | 3            |
 | salary   | 62000        |
 | hire_date | '2024-07-01' |
@@ -136,7 +136,7 @@ ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
 
 | id | name | salary |
 |----|------|--------|
-| 11 | Luna | 62000  |
+| 11 | 麻衣 | 62000  |
 
 ---
 
@@ -144,14 +144,14 @@ ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
 
 **ファイル:** `exercises/chapter07/ex03.sql`
 
-`employees` テーブルで、`id = 2`（Bob）の `salary` を **78000** に更新してください。
+`employees` テーブルで、`id = 2`（一郎）の `salary` を **78000** に更新してください。
 更新後に `SELECT` で確認する SQL も書いてください。
 
 **確認クエリの期待される結果:**
 
 | id | name | salary |
 |----|------|--------|
-| 2  | Bob  | 78000  |
+| 2  | 一郎 | 78000  |
 
 ---
 
@@ -159,15 +159,15 @@ ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
 
 **ファイル:** `exercises/chapter07/ex04.sql`
 
-`employees` テーブルで、**`dept_id = 4`（Sales 部署）の社員全員**の給与を **5% 増やして** ください。
+`employees` テーブルで、**`dept_id = 4`（営業部署）の社員全員**の給与を **5% 増やして** ください。
 更新後に `SELECT` で確認する SQL も書いてください。
 
 **確認クエリの期待される結果:**
 
 | id | name  | salary |
 |----|-------|--------|
-| 7  | Grace | 50400  |
-| 10 | Jack  | 54600  |
+| 7  | あかね | 50400 |
+| 10 | 翔太  | 54600  |
 
 > 48000 × 1.05 = 50400、52000 × 1.05 = 54600
 
@@ -177,7 +177,7 @@ ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
 
 **ファイル:** `exercises/chapter07/ex05.sql`
 
-`employees` テーブルから、`id = 8`（Henry）を削除してください。
+`employees` テーブルから、`id = 8`（昭二）を削除してください。
 削除後に全社員数が 9 になることを `COUNT(*)` で確認する SQL も書いてください。
 
 **確認クエリの期待される結果:**
@@ -192,11 +192,11 @@ ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
 
 **ファイル:** `exercises/chapter07/ex06.sql`
 
-`employee_projects` テーブルから、`employee_id = 10`（Jack）のレコードを削除し、
+`employee_projects` テーブルから、`employee_id = 10`（翔太）のレコードを削除し、
 `RETURNING *` で削除した行を確認してください。
 
 **期待される結果（RETURNING の出力）:**
 
-| employee_id | project_id | role   |
-|-------------|------------|--------|
-| 10          | 4          | Member |
+| employee_id | project_id | role    |
+|-------------|------------|---------|
+| 10          | 4          | メンバー |

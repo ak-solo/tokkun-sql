@@ -41,7 +41,7 @@ FROM employees e
 INNER JOIN departments d ON e.dept_id = d.id;
 ```
 
-> `dept_id` が NULL の社員（Henry）は結果に含まれません。
+> `dept_id` が NULL の社員（昭二）は結果に含まれません。
 
 テーブルに別名（エイリアス）をつけると、カラム名の衝突を避けられます。
 
@@ -55,7 +55,7 @@ FROM employees e
 LEFT JOIN departments d ON e.dept_id = d.id;
 ```
 
-> `dept_id` が NULL の Henry も結果に含まれ、`部署名` が NULL になります。
+> `dept_id` が NULL の昭二も結果に含まれ、`部署名` が NULL になります。
 
 ### 3. 複数テーブルの結合
 
@@ -93,19 +93,19 @@ INNER JOIN employees m ON e.manager_id = m.id;
 `id`、`name`（社員名）、`departments.name`（部署名）、`salary` を取得してください。
 `id` の昇順で並べてください。
 
-**期待される結果（9行 — Henry は部署 NULL のため除外）:**
+**期待される結果（9行 — 昭二は部署 NULL のため除外）:**
 
-| id | name  | 部署名      | salary |
-|----|-------|------------|--------|
-| 1  | Alice | Engineering | 75000  |
-| 2  | Bob   | Engineering | 60000  |
-| 3  | Carol | Marketing   | 55000  |
-| 4  | Dave  | Marketing   | 50000  |
-| 5  | Eve   | HR          | 65000  |
-| 6  | Frank | Engineering | 80000  |
-| 7  | Grace | Sales       | 48000  |
-| 9  | Iris  | HR          | 58000  |
-| 10 | Jack  | Sales       | 52000  |
+| id | name  | 部署名         | salary |
+|----|-------|---------------|--------|
+| 1  | 花子  | 開発           | 75000  |
+| 2  | 一郎  | 開発           | 60000  |
+| 3  | 美子  | マーケティング  | 55000  |
+| 4  | 悠介  | マーケティング  | 50000  |
+| 5  | 由子  | 人事           | 65000  |
+| 6  | 健太  | 開発           | 80000  |
+| 7  | あかね | 営業          | 48000  |
+| 9  | 京子  | 人事           | 58000  |
+| 10 | 翔太  | 営業           | 52000  |
 
 ---
 
@@ -117,20 +117,20 @@ INNER JOIN employees m ON e.manager_id = m.id;
 `id`、`name`（社員名）、`departments.name`（部署名）、`salary` を取得してください。
 `id` の昇順で並べてください。
 
-**期待される結果（10行 — Henry の部署名は NULL）:**
+**期待される結果（10行 — 昭二の部署名は NULL）:**
 
-| id | name  | 部署名      | salary |
-|----|-------|------------|--------|
-| 1  | Alice | Engineering | 75000  |
-| 2  | Bob   | Engineering | 60000  |
-| 3  | Carol | Marketing   | 55000  |
-| 4  | Dave  | Marketing   | 50000  |
-| 5  | Eve   | HR          | 65000  |
-| 6  | Frank | Engineering | 80000  |
-| 7  | Grace | Sales       | 48000  |
-| 8  | Henry | NULL        | 45000  |
-| 9  | Iris  | HR          | 58000  |
-| 10 | Jack  | Sales       | 52000  |
+| id | name  | 部署名         | salary |
+|----|-------|---------------|--------|
+| 1  | 花子  | 開発           | 75000  |
+| 2  | 一郎  | 開発           | 60000  |
+| 3  | 美子  | マーケティング  | 55000  |
+| 4  | 悠介  | マーケティング  | 50000  |
+| 5  | 由子  | 人事           | 65000  |
+| 6  | 健太  | 開発           | 80000  |
+| 7  | あかね | 営業          | 48000  |
+| 8  | 昭二  | NULL           | 45000  |
+| 9  | 京子  | 人事           | 58000  |
+| 10 | 翔太  | 営業           | 52000  |
 
 ---
 
@@ -142,22 +142,24 @@ INNER JOIN employees m ON e.manager_id = m.id;
 **社員名**・**プロジェクト名**・**役割（role）** の一覧を取得してください。
 社員名の昇順、同じ社員名ならプロジェクト名の昇順で並べてください。
 
+> ※ PostgreSQL は日本語文字列をUnicodeコードポイント順で並べます。
+
 **期待される結果（12行）:**
 
-| 社員名 | プロジェクト名 | role   |
-|--------|--------------|--------|
-| Alice  | Alpha        | Lead   |
-| Alice  | Gamma        | Lead   |
-| Bob    | Alpha        | Member |
-| Bob    | Gamma        | Member |
-| Carol  | Beta         | Lead   |
-| Dave   | Beta         | Member |
-| Eve    | Delta        | Lead   |
-| Frank  | Alpha        | Member |
-| Frank  | Gamma        | Member |
-| Grace  | Delta        | Member |
-| Iris   | Gamma        | Member |
-| Jack   | Delta        | Member |
+| 社員名 | プロジェクト名 | role     |
+|--------|--------------|----------|
+| あかね | 海外展開      | メンバー  |
+| 一郎   | データ統合    | メンバー  |
+| 一郎   | 基盤整備      | メンバー  |
+| 京子   | データ統合    | メンバー  |
+| 健太   | データ統合    | メンバー  |
+| 健太   | 基盤整備      | メンバー  |
+| 悠介   | 新規開拓      | メンバー  |
+| 由子   | 海外展開      | リーダー  |
+| 美子   | 新規開拓      | リーダー  |
+| 翔太   | 海外展開      | メンバー  |
+| 花子   | データ統合    | リーダー  |
+| 花子   | 基盤整備      | リーダー  |
 
 ---
 
@@ -172,11 +174,11 @@ INNER JOIN employees m ON e.manager_id = m.id;
 
 | 社員名 | 上司名 |
 |--------|--------|
-| Bob    | Alice  |
-| Dave   | Carol  |
-| Frank  | Alice  |
-| Iris   | Eve    |
-| Jack   | Grace  |
+| 一郎   | 花子   |
+| 京子   | 由子   |
+| 健太   | 花子   |
+| 悠介   | 美子   |
+| 翔太   | あかね |
 
 ---
 
@@ -188,11 +190,11 @@ INNER JOIN employees m ON e.manager_id = m.id;
 参加している社員の「社員名」と「役割」を取得してください。
 役割の昇順、同じ役割なら社員名の昇順で並べてください。
 
-**期待される結果（4行 — プロジェクト Gamma が該当）:**
+**期待される結果（4行 — プロジェクト「データ統合」が該当）:**
 
-| 社員名 | role   |
-|--------|--------|
-| Alice  | Lead   |
-| Bob    | Member |
-| Frank  | Member |
-| Iris   | Member |
+| 社員名 | role    |
+|--------|---------|
+| 一郎   | メンバー |
+| 京子   | メンバー |
+| 健太   | メンバー |
+| 花子   | リーダー |

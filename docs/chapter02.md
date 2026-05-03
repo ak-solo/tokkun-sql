@@ -18,16 +18,16 @@
 
 | id | name  | dept_id | salary | hire_date  | manager_id |
 |----|-------|---------|--------|------------|------------|
-| 1  | Alice | 1       | 75000  | 2020-04-01 | NULL       |
-| 2  | Bob   | 1       | 60000  | 2021-06-15 | 1          |
-| 3  | Carol | 2       | 55000  | 2019-03-01 | NULL       |
-| 4  | Dave  | 2       | 50000  | 2022-01-10 | 3          |
-| 5  | Eve   | 3       | 65000  | 2018-09-01 | NULL       |
-| 6  | Frank | 1       | 80000  | 2017-05-20 | 1          |
-| 7  | Grace | 4       | 48000  | 2023-02-14 | NULL       |
-| 8  | Henry | NULL    | 45000  | 2023-07-01 | NULL       |
-| 9  | Iris  | 3       | 58000  | 2021-11-30 | 5          |
-| 10 | Jack  | 4       | 52000  | 2020-08-15 | 7          |
+| 1  | 花子  | 1       | 75000  | 2020-04-01 | NULL       |
+| 2  | 一郎  | 1       | 60000  | 2021-06-15 | 1          |
+| 3  | 美子  | 2       | 55000  | 2019-03-01 | NULL       |
+| 4  | 悠介  | 2       | 50000  | 2022-01-10 | 3          |
+| 5  | 由子  | 3       | 65000  | 2018-09-01 | NULL       |
+| 6  | 健太  | 1       | 80000  | 2017-05-20 | 1          |
+| 7  | あかね | 4      | 48000  | 2023-02-14 | NULL       |
+| 8  | 昭二  | NULL    | 45000  | 2023-07-01 | NULL       |
+| 9  | 京子  | 3       | 58000  | 2021-11-30 | 5          |
+| 10 | 翔太  | 4       | 52000  | 2020-08-15 | 7          |
 
 ---
 
@@ -68,10 +68,10 @@ SELECT name FROM employees WHERE NOT salary > 60000;
 `%` は0文字以上の任意の文字列、`_` は1文字を表します。
 
 ```sql
-SELECT name FROM employees WHERE name LIKE 'A%';   -- 'A' で始まる
-SELECT name FROM employees WHERE name LIKE '%e';   -- 'e' で終わる
-SELECT name FROM employees WHERE name LIKE '%r%';  -- 'r' を含む
-SELECT name FROM employees WHERE name LIKE '_o%';  -- 2文字目が 'o'
+SELECT name FROM employees WHERE name LIKE '花%';   -- '花' で始まる → 花子
+SELECT name FROM employees WHERE name LIKE '%子';   -- '子' で終わる → 花子, 美子, 由子, 京子
+SELECT name FROM employees WHERE name LIKE '%介%';  -- '介' を含む → 悠介
+SELECT name FROM employees WHERE name LIKE '_子';   -- ちょうど2文字で '子' で終わる
 ```
 
 > `LIKE` は大文字小文字を区別します。区別しない場合は `ILIKE` を使います。
@@ -121,11 +121,11 @@ SELECT name FROM employees WHERE dept_id IS NOT NULL;
 
 **期待される結果（3行）:**
 
-| id | name  | salary |
-|----|-------|--------|
-| 1  | Alice | 75000  |
-| 5  | Eve   | 65000  |
-| 6  | Frank | 80000  |
+| id | name | salary |
+|----|------|--------|
+| 1  | 花子 | 75000  |
+| 5  | 由子 | 65000  |
+| 6  | 健太 | 80000  |
 
 > ※ 行の順序は問いません。
 
@@ -139,10 +139,10 @@ SELECT name FROM employees WHERE dept_id IS NOT NULL;
 
 **期待される結果（2行）:**
 
-| name  | salary |
-|-------|--------|
-| Alice | 75000  |
-| Frank | 80000  |
+| name | salary |
+|------|--------|
+| 花子 | 75000  |
+| 健太 | 80000  |
 
 ---
 
@@ -156,10 +156,10 @@ SELECT name FROM employees WHERE dept_id IS NOT NULL;
 
 | id | name  | dept_id |
 |----|-------|---------|
-| 3  | Carol | 2       |
-| 4  | Dave  | 2       |
-| 7  | Grace | 4       |
-| 10 | Jack  | 4       |
+| 3  | 美子  | 2       |
+| 4  | 悠介  | 2       |
+| 7  | あかね | 4      |
+| 10 | 翔太  | 4       |
 
 > **ヒント:** `OR` を2つ書く方法と `IN` を使う方法、どちらでも書けます。
 
@@ -169,16 +169,16 @@ SELECT name FROM employees WHERE dept_id IS NOT NULL;
 
 **ファイル:** `exercises/chapter02/ex04.sql`
 
-`employees` テーブルから、`name` に **`'r'` が含まれる** 社員の `id` と `name` を取得してください。
+`employees` テーブルから、`name` に **`'子'` が含まれる** 社員の `id` と `name` を取得してください。
 
 **期待される結果（4行）:**
 
-| id | name  |
-|----|-------|
-| 3  | Carol |
-| 6  | Frank |
-| 7  | Grace |
-| 9  | Iris  |
+| id | name |
+|----|------|
+| 1  | 花子 |
+| 3  | 美子 |
+| 5  | 由子 |
+| 9  | 京子 |
 
 ---
 
@@ -192,12 +192,12 @@ SELECT name FROM employees WHERE dept_id IS NOT NULL;
 
 | name  | salary |
 |-------|--------|
-| Bob   | 60000  |
-| Carol | 55000  |
-| Dave  | 50000  |
-| Eve   | 65000  |
-| Iris  | 58000  |
-| Jack  | 52000  |
+| 一郎  | 60000  |
+| 美子  | 55000  |
+| 悠介  | 50000  |
+| 由子  | 65000  |
+| 京子  | 58000  |
+| 翔太  | 52000  |
 
 ---
 
@@ -209,6 +209,6 @@ SELECT name FROM employees WHERE dept_id IS NOT NULL;
 
 **期待される結果（1行）:**
 
-| id | name  | dept_id | salary | hire_date  | manager_id |
-|----|-------|---------|--------|------------|------------|
-| 8  | Henry | NULL    | 45000  | 2023-07-01 | NULL       |
+| id | name | dept_id | salary | hire_date  | manager_id |
+|----|------|---------|--------|------------|------------|
+| 8  | 昭二 | NULL    | 45000  | 2023-07-01 | NULL       |
