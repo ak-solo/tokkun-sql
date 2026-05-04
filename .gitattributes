@@ -1,0 +1,16 @@
+# デフォルト: テキストファイルは OS に合わせて自動変換
+* text=auto
+
+# シェルスクリプトは必ず LF（CRLF だと bash が動かない）
+*.sh text eol=lf
+
+# SQL・設定ファイルは LF 統一
+*.sql text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.csv text eol=lf
+*.env text eol=lf
+
+# バイナリファイルは変換しない
+*.png binary
+*.jpg binary
