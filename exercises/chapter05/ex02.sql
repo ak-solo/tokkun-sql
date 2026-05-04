@@ -4,3 +4,13 @@
 -- id の昇順で並べてください。
 
 -- ここに SQL を書いてください
+SELECT
+    e.id,
+    e.name AS 社員名,
+    d.name AS 部署名,
+    salary
+FROM
+    employees e
+    LEFT JOIN departments d ON e.dept_id = d.id
+ORDER BY
+    e.id ASC;
