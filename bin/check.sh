@@ -12,6 +12,9 @@ PASS=0
 FAIL=0
 SKIP=0
 
+WORKDIR=$(mktemp -d)
+trap 'rm -rf "$WORKDIR"' EXIT
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -22,11 +25,6 @@ if [ -z "${DATABASE_URL:-}" ]; then
   echo "  例: export DATABASE_URL=postgresql://postgres:postgres@db:5432/tokkun_sql"
   exit 1
 fi
-
-# ヘッダー行を除いたデータ行をソートして返す（行順序に依存しない比較のため）
-data_rows_sorted() {
-  tail -n +2 | sort
-}
 
 # 学習者SQLファイルが未回答（コメントと空白のみ）かどうか確認
 is_empty() {
@@ -54,8 +52,12 @@ test_select() {
     return
   fi
 
-  local actual expected err_actual
-  actual=$(psql "$DATABASE_URL" --csv -q -f "$exercise_file" 2>/tmp/tokkun_sql_err || true)
+  # テンポラリファイルに書き出す（変数代入による末尾改行削除を避けるため）
+  local actual_csv="$WORKDIR/actual.csv"
+  local expected_csv="$WORKDIR/expected.csv"
+
+  psql "$DATABASE_URL" --csv -q -f "$exercise_file" > "$actual_csv" 2>/tmp/tokkun_sql_err || true
+  local err_actual
   err_actual=$(cat /tmp/tokkun_sql_err 2>/dev/null || true)
 
   if [ -n "$err_actual" ]; then
@@ -65,25 +67,22 @@ test_select() {
     return
   fi
 
-  expected=$(psql "$DATABASE_URL" --csv -q -f "$ref_file" 2>/dev/null || true)
+  psql "$DATABASE_URL" --csv -q -f "$ref_file" > "$expected_csv" 2>/dev/null || true
 
-  local actual_sorted expected_sorted
-  actual_sorted=$(printf '%s\n' "$actual" | data_rows_sorted)
-  expected_sorted=$(printf '%s\n' "$expected" | data_rows_sorted)
-
-  if [ "$actual_sorted" = "$expected_sorted" ]; then
+  # diff でソート済み出力を比較（行順序は問わない）
+  if diff <(tail -n +2 "$actual_csv" | sort) <(tail -n +2 "$expected_csv" | sort) > /dev/null 2>&1; then
     echo -e "${GREEN}PASS${RESET} $label"
     PASS=$((PASS + 1))
   else
     echo -e "${RED}FAIL${RESET} $label"
     echo "  期待される出力:"
-    printf '%s\n' "$expected" | head -6 | sed 's/^/    /'
+    head -6 "$expected_csv" | sed 's/^/    /'
     echo "  あなたの出力:"
-    printf '%s\n' "$actual" | head -6 | sed 's/^/    /'
+    head -6 "$actual_csv" | sed 's/^/    /'
     local expected_header actual_header
-    expected_header=$(printf '%s\n' "$expected" | head -1)
-    actual_header=$(printf '%s\n' "$actual" | head -1)
-    if [ "$actual_header" != "$expected_header" ]; then
+    expected_header=$(head -1 "$expected_csv")
+    actual_header=$(head -1 "$actual_csv")
+    if [ "$expected_header" != "$actual_header" ]; then
       echo "  ※ カラム名が違います → 期待: '$expected_header'  実際: '$actual_header'"
     fi
     FAIL=$((FAIL + 1))
@@ -123,23 +122,19 @@ test_dml() {
     return
   fi
 
-  # verify クエリでDB状態を確認し、期待値と比較
-  local actual expected_content actual_sorted expected_sorted
-  actual=$(psql "$DATABASE_URL" --csv -q -f "$verify_file" 2>/dev/null || true)
-  expected_content=$(cat "$expected_file")
+  # verify クエリでDB状態を確認し、期待値と比較（テンポラリファイル経由で末尾改行を保持）
+  local actual_csv="$WORKDIR/actual.csv"
+  psql "$DATABASE_URL" --csv -q -f "$verify_file" > "$actual_csv" 2>/dev/null || true
 
-  actual_sorted=$(printf '%s\n' "$actual" | data_rows_sorted)
-  expected_sorted=$(printf '%s\n' "$expected_content" | data_rows_sorted)
-
-  if [ "$actual_sorted" = "$expected_sorted" ]; then
+  if diff <(tail -n +2 "$actual_csv" | sort) <(tail -n +2 "$expected_file" | sort) > /dev/null 2>&1; then
     echo -e "${GREEN}PASS${RESET} $label"
     PASS=$((PASS + 1))
   else
     echo -e "${RED}FAIL${RESET} $label"
     echo "  期待される出力:"
-    printf '%s\n' "$expected_content" | head -6 | sed 's/^/    /'
+    head -6 "$expected_file" | sed 's/^/    /'
     echo "  あなたの出力:"
-    printf '%s\n' "$actual" | head -6 | sed 's/^/    /'
+    head -6 "$actual_csv" | sed 's/^/    /'
     FAIL=$((FAIL + 1))
   fi
 }
