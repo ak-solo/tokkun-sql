@@ -2,3 +2,11 @@
 -- salary が 60000 より高い社員の id、name、salary を取得してください。
 
 -- ここに SQL を書いてください
+SELECT
+    id,
+    name,
+    salary
+FROM
+    employees
+WHERE
+    salary > 60000;
