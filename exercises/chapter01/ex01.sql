@@ -2,3 +2,7 @@
 -- employees テーブルの全データ（全カラム）を取得してください。
 
 -- ここに SQL を書いてください
+SELECT
+    *
+FROM
+    employees;

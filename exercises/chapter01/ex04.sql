@@ -3,3 +3,7 @@
 -- 「敬称」というカラム名で取得してください。
 
 -- ここに SQL を書いてください
+SELECT
+    name || 'さん'
+FROM
+    employees;

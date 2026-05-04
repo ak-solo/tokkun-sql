@@ -3,3 +3,9 @@
 -- 10% 増の給与カラムは「昇給後の給与」という別名で表示してください。
 
 -- ここに SQL を書いてください
+SELECT
+    name,
+    salary,
+    salary * 1.1 AS 昇給後の給与
+FROM
+    employees;

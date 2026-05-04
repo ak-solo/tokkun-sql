@@ -2,3 +2,9 @@
 -- employees テーブルから id、name、salary の3カラムだけを取得してください。
 
 -- ここに SQL を書いてください
+SELECT
+    id,
+    name,
+    salary
+FROM
+    employees;
