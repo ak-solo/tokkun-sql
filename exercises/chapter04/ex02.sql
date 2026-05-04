@@ -4,3 +4,12 @@
 -- カラム名は「dept_id」と「社員数」としてください。
 
 -- ここに SQL を書いてください
+SELECT
+    dept_id,
+    COUNT(*) AS 社員数
+FROM
+    employees
+GROUP BY
+    dept_id
+ORDER BY
+    dept_id ASC;

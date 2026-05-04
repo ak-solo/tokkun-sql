@@ -3,3 +3,9 @@
 -- カラム名はそれぞれ「最高給与」「最低給与」「平均給与」としてください。
 
 -- ここに SQL を書いてください
+SELECT
+    MAX(salary) AS 最高給与,
+    MIN(salary) AS 最低給与,
+    ROUND(AVG(salary)) AS 平均給与
+FROM
+    employees;
