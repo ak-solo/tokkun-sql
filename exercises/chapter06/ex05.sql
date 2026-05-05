@@ -15,6 +15,8 @@ FROM
             ROUND(AVG(salary)) AS avg_salary
         FROM
             employees
+        WHERE
+            dept_id IS NOT NULL
         GROUP BY
             dept_id
         HAVING

@@ -4,7 +4,7 @@
 BEGIN;
 
 -- INSERT ... RETURNING 文をここに書いてください
-INSERT INtO
+INSERT INTO
     employees (name, dept_id, salary, hire_date)
 VALUES
     ('麻衣', 3, 62000, '2024-07-01') RETURNING id,

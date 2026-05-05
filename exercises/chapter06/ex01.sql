@@ -10,7 +10,7 @@ SELECT
 FROM
     employees
 WHERE
-    salary >= (
+    salary > (
         SELECT
             AVG(salary)
         FROM

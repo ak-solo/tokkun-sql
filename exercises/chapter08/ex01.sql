@@ -9,7 +9,7 @@ CREATE TABLE
     products (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
-        price INtEGER
+        price INTEGER
     );
 
 -- 確認: \d products

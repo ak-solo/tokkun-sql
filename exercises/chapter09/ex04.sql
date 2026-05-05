@@ -17,12 +17,7 @@ SELECT
 FROM
     employees
 WHERE
-    dept_id IS NOt NULL
+    dept_id IS NOT NULL
 ORDER BY
     dept_id ASC,
-    ROW_NUMBER() OVER (
-        PARTITION BY
-            dept_id
-        ORDER BY
-            salary DESC
-    ) ASC
+    部署内順位 ASC;
