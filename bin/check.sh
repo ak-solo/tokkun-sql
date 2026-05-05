@@ -69,21 +69,27 @@ test_select() {
 
   psql "$DATABASE_URL" --csv -q -f "$ref_file" > "$expected_csv" 2>/dev/null || true
 
-  # diff でソート済み出力を比較（行順序は問わない）
-  if diff <(tail -n +2 "$actual_csv" | sort) <(tail -n +2 "$expected_csv" | sort) > /dev/null 2>&1; then
+  local actual_header expected_header
+  actual_header=$(head -1 "$actual_csv")
+  expected_header=$(head -1 "$expected_csv")
+
+  local header_ok=true data_ok=true
+  [ "$actual_header" = "$expected_header" ] || header_ok=false
+  diff <(tail -n +2 "$actual_csv" | sort) <(tail -n +2 "$expected_csv" | sort) > /dev/null 2>&1 || data_ok=false
+
+  if $header_ok && $data_ok; then
     echo -e "${GREEN}PASS${RESET} $label"
     PASS=$((PASS + 1))
   else
     echo -e "${RED}FAIL${RESET} $label"
-    echo "  期待される出力:"
-    head -6 "$expected_csv" | sed 's/^/    /'
-    echo "  あなたの出力:"
-    head -6 "$actual_csv" | sed 's/^/    /'
-    local expected_header actual_header
-    expected_header=$(head -1 "$expected_csv")
-    actual_header=$(head -1 "$actual_csv")
-    if [ "$expected_header" != "$actual_header" ]; then
-      echo "  ※ カラム名が違います → 期待: '$expected_header'  実際: '$actual_header'"
+    if ! $header_ok; then
+      echo "  カラム名: 期待='$expected_header'  実際='$actual_header'"
+    fi
+    if ! $data_ok; then
+      echo "  期待される出力:"
+      head -6 "$expected_csv" | sed 's/^/    /'
+      echo "  あなたの出力:"
+      head -6 "$actual_csv" | sed 's/^/    /'
     fi
     FAIL=$((FAIL + 1))
   fi
