@@ -5,3 +5,43 @@
 -- dept_id の昇順、同じ部署なら部署内順位の昇順で並べてください。
 
 -- ここに SQL を書いてください
+SELECT
+    e.name,
+    d.name AS 部署名,
+    e.salary,
+    e.salary_rank AS 部署内順位,
+    e.avg_salary AS 部署平均,
+    e.salary_diff AS 差額
+FROM
+    (
+        SELECT
+            name,
+            dept_id,
+            salary,
+            RANK() OVER (
+                PARTITION BY
+                    dept_id
+                ORDER BY
+                    salary DESC
+            ) AS salary_rank,
+            ROUND(
+                AVG(salary) OVER (
+                    PARTITION BY
+                        dept_id
+                )
+            ) AS avg_salary,
+            salary - ROUND(
+                AVG(salary) OVER (
+                    PARTITION BY
+                        dept_id
+                )
+            ) AS salary_diff
+        FROM
+            employees
+        WHERE
+            dept_id IS NOT NULL
+    ) e
+    LEFT JOIN departments d ON e.dept_id = d.id
+ORDER BY
+    e.dept_id ASC,
+    e.salary_rank ASC;
