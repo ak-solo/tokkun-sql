@@ -4,3 +4,21 @@
 -- 定義後、emp_dept_view から全行を id の昇順で取得してください。
 
 -- ここに SQL を書いてください
+CREATE VIEW
+    emp_dept_view AS (
+        SELECT
+            e.id,
+            e.name AS 社員名,
+            d.name AS 部署名,
+            e.salary
+        FROM
+            employees e
+            LEFT JOIN departments d ON e.dept_id = d.id
+    );
+
+SELECT
+    *
+FROM
+    emp_dept_view
+ORDER BY
+    id ASC;

@@ -5,3 +5,24 @@
 -- 定義後、dept_stats_view から全行を平均給与の降順で取得してください。
 
 -- ここに SQL を書いてください
+CREATE VIEW
+    dept_stats_view AS (
+        SELECT
+            d.name AS 部署名,
+            COUNT(e.id) AS 人数,
+            ROUND(AVG(e.salary)) AS 平均給与
+        FROM
+            employees e
+            INNER JOIN departments d ON e.dept_id = d.id
+        WHERE
+            e.dept_id IS NOT NULL
+        GROUP BY
+            d.name
+    );
+
+SELECT
+    *
+FROM
+    dept_stats_view
+ORDER BY
+    平均給与 DESC;
