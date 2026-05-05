@@ -1,5 +1,5 @@
 -- 問題 7-5: DELETE
--- id = 8（Henry）を employees テーブルから削除してください。
+-- id = 8（昭二）を employees テーブルから削除してください。
 -- 削除後、COUNT(*) で社員数が 9 になることを確認してください。
 BEGIN;
 
