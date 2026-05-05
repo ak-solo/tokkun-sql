@@ -70,12 +70,12 @@ test_select() {
   psql "$DATABASE_URL" --csv -q -f "$ref_file" > "$expected_csv" 2>/dev/null || true
 
   local actual_header expected_header
-  actual_header=$(head -1 "$actual_csv")
-  expected_header=$(head -1 "$expected_csv")
+  actual_header=$(head -1 "$actual_csv" | tr -d '\r')
+  expected_header=$(head -1 "$expected_csv" | tr -d '\r')
 
   local header_ok=true data_ok=true
   [ "$actual_header" = "$expected_header" ] || header_ok=false
-  diff <(tail -n +2 "$actual_csv" | sort) <(tail -n +2 "$expected_csv" | sort) > /dev/null 2>&1 || data_ok=false
+  diff <(tail -n +2 "$actual_csv" | tr -d '\r' | sort) <(tail -n +2 "$expected_csv" | tr -d '\r' | sort) > /dev/null 2>&1 || data_ok=false
 
   if $header_ok && $data_ok; then
     echo -e "${GREEN}PASS${RESET} $label"
@@ -135,7 +135,7 @@ test_dml() {
   local actual_csv="$WORKDIR/actual.csv"
   psql "$DATABASE_URL" --csv -q -f "$verify_file" > "$actual_csv" 2>/dev/null || true
 
-  if diff <(tail -n +2 "$actual_csv" | sort) <(tail -n +2 "$expected_file" | sort) > /dev/null 2>&1; then
+  if diff <(tail -n +2 "$actual_csv" | tr -d '\r' | sort) <(tail -n +2 "$expected_file" | tr -d '\r' | sort) > /dev/null 2>&1; then
     echo -e "${GREEN}PASS${RESET} $label"
     PASS=$((PASS + 1))
   else
