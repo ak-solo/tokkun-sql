@@ -3,6 +3,4 @@
 -- ビューが存在しない場合でもエラーにならないよう IF EXISTS を使ってください。
 
 -- ここに SQL を書いてください
-DROP VIEW IF EXISTS emp_dept_view;
-
-DROP VIEW IF EXISTS dept_stats_view;
+DROP VIEW IF EXISTS emp_dept_view, dept_stats_view;
