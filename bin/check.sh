@@ -198,7 +198,7 @@ run_chapter() {
 TARGET="${1:-}"
 
 if [ -z "$TARGET" ]; then
-  for ch in chapter01 chapter02 chapter03 chapter04 chapter05 chapter06 chapter07 chapter08 chapter09 chapter10; do
+  for ch in chapter01 chapter02 chapter03 chapter04 chapter05 chapter06 chapter07 chapter08 chapter09 chapter10 chapter11; do
     run_chapter "$ch"
   done
 elif [[ "$TARGET" == *"/"* ]]; then
