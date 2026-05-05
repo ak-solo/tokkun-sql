@@ -6,7 +6,7 @@
 -- ここに SQL を書いてください
 SELECT
     e.id,
-    e.name AS 社員名,
+    e.name,
     d.name AS 部署名,
     e.salary
 FROM

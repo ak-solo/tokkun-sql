@@ -3,6 +3,6 @@
 
 -- ここに SQL を書いてください
 SELECT
-    COUNT(*)
+    COUNT(*) AS 社員数
 FROM
     employees;

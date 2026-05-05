@@ -4,6 +4,6 @@
 
 -- ここに SQL を書いてください
 SELECT
-    name || 'さん'
+    name || 'さん' AS 敬称
 FROM
     employees;
