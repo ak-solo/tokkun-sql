@@ -8,26 +8,18 @@
 SELECT
     m.name AS マネージャー名,
     d.name AS 部署名,
-    m.count AS 部下人数,
-    m.avg_salary AS 部下平均給与,
-    m.max_salary AS 部下最高給与
+    COUNT(*) AS 部下人数,
+    ROUND(AVG(e.salary)) AS 部下平均給与,
+    MAX(e.salary) AS 部下最高給与
 FROM
-    (
-        SELECT
-            m.name,
-            m.dept_id,
-            COUNT(*) AS count,
-            ROUND(AVG(e.salary)) AS avg_salary,
-            MAX(e.salary) AS max_salary
-        FROM
-            employees m
-            INNER JOIN employees e ON m.id = e.manager_id
-        GROUP BY
-            m.id,
-            m.name,
-            m.dept_id
-    ) m
+    employees m
+    INNER JOIN employees e ON m.id = e.manager_id
     LEFT JOIN departments d ON m.dept_id = d.id
+GROUP BY
+    m.id,
+    m.name,
+    m.dept_id,
+    d.name
 ORDER BY
-    m.count DESC,
+    COUNT(*) DESC,
     m.name ASC;

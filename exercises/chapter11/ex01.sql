@@ -4,34 +4,31 @@
 -- salary の降順で並べてください。
 
 -- ここに SQL を書いてください
-SELECT
-    d.name AS 部署名,
-    e.name,
-    e.salary
-FROM
-    (
+WITH
+    ranked AS (
         SELECT
             dept_id,
             name,
-            salary
+            salary,
+            RANK() OVER (
+                PARTITION BY
+                    dept_id
+                ORDER BY
+                    salary DESC
+            ) AS salary_rank
         FROM
-            (
-                SELECT
-                    dept_id,
-                    name,
-                    salary,
-                    RANK() OVER (
-                        PARTITION BY
-                            dept_id
-                        ORDER BY
-                            salary DESC
-                    ) rank
-                FROM
-                    employees
-            ) e
+            employees
         WHERE
-            rank = 1
-    ) e
-    INNER JOIN departments d ON e.dept_id = d.id
+            dept_id IS NOT NULL
+    )
+SELECT
+    d.name AS 部署名,
+    r.name,
+    r.salary
+FROM
+    ranked r
+    INNER JOIN departments d ON r.dept_id = d.id
+WHERE
+    r.salary_rank = 1
 ORDER BY
-    e.salary DESC;
+    r.salary DESC;

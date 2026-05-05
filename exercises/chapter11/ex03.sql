@@ -18,4 +18,4 @@ WHERE
             employee_projects ep
         WHERE
             ep.employee_id = e.id
-    )
+    );

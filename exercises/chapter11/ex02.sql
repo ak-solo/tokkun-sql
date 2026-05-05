@@ -28,6 +28,6 @@ FROM
     ) e
     INNER JOIN departments d ON e.dept_id = d.id
 WHERE
-    e.salary >= e.avg_salary
+    e.salary > e.avg_salary
 ORDER BY
     e.salary DESC;
