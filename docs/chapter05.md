@@ -70,6 +70,8 @@ INNER JOIN departments d ON e.dept_id = d.id;
 
 > テーブルに別名（エイリアス）をつけると、カラム名の衝突を避けられます（`e`、`d`）。
 
+> `JOIN` だけ書いた場合も `INNER JOIN` と同じ意味です。本教材では明示的に `INNER JOIN` と書きます。
+
 ### 2. LEFT JOIN
 
 **左テーブルの全行を保持**し、右テーブルに一致する行がなければ NULL で埋めます。
