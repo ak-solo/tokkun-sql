@@ -1,5 +1,6 @@
-SELECT name, hire_date, salary,
-       LAG(salary) OVER (ORDER BY hire_date) AS 前の社員の給与,
-       salary - LAG(salary) OVER (ORDER BY hire_date) AS 給与差
+SELECT name, dept_id, salary,
+       SUM(salary) OVER (PARTITION BY dept_id) AS 部署給与合計,
+       ROUND(salary * 100.0 / SUM(salary) OVER (PARTITION BY dept_id), 1) AS 割合
 FROM employees
-ORDER BY hire_date;
+WHERE dept_id IS NOT NULL
+ORDER BY dept_id ASC, salary DESC;

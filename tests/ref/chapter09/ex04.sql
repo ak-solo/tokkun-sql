@@ -1,6 +1,5 @@
 SELECT name, dept_id, salary,
-       SUM(salary) OVER (PARTITION BY dept_id) AS 部署給与合計,
-       ROUND(salary * 100.0 / SUM(salary) OVER (PARTITION BY dept_id), 1) AS 割合
+       ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS 部署内順位
 FROM employees
 WHERE dept_id IS NOT NULL
-ORDER BY dept_id ASC, salary DESC;
+ORDER BY dept_id ASC, 部署内順位 ASC;
