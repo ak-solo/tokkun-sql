@@ -114,6 +114,7 @@ role                              start_date
 
 | 章 | タイトル | 主なトピック |
 |----|----------|--------------|
+| 00 | はじめに | データベース・テーブル・SQL・NULL の基礎概念、使用テーブルの紹介 |
 | 01 | SELECT 基本 | `*`、カラム指定、エイリアス、文字列結合、計算式、`DISTINCT` |
 | 02 | WHERE | 比較演算子、`AND`/`OR`/`NOT`、`LIKE`、`BETWEEN`、`IN`、`IS NULL` |
 | 03 | 並び替え・絞り込み | `ORDER BY`、`LIMIT`、`OFFSET` |
