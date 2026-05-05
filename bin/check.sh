@@ -117,9 +117,10 @@ test_dml() {
   # DBリセット
   psql "$DATABASE_URL" -q -f "$ROOT/init/reset.sql" > /dev/null 2>&1
 
-  # 学習者のDMLを実行
-  local err_dml
-  psql "$DATABASE_URL" -q -f "$exercise_file" > /dev/null 2>/tmp/tokkun_sql_err || true
+  # 学習者のDMLを実行（ROLLBACK をCOMMIT に置換: 練習用のROLLBACKがあってもverify できるよう）
+  local err_dml temp_sql="$WORKDIR/exercise.sql"
+  sed 's/^\s*ROLLBACK\s*;/COMMIT;/Ig' "$exercise_file" > "$temp_sql"
+  psql "$DATABASE_URL" -q -f "$temp_sql" > /dev/null 2>/tmp/tokkun_sql_err || true
   err_dml=$(cat /tmp/tokkun_sql_err 2>/dev/null || true)
   if [ -n "$err_dml" ]; then
     echo -e "${RED}FAIL${RESET} $label"
