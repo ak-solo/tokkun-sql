@@ -1,5 +1,5 @@
 -- 問題 7-6: DELETE ... RETURNING
--- employee_projects テーブルから employee_id = 10（Jack）のレコードを削除し、
+-- employee_projects テーブルから employee_id = 10（翔太）のレコードを削除し、
 -- RETURNING * で削除した行を確認してください。
 
 BEGIN;
