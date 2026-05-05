@@ -4,3 +4,25 @@
 -- dept_id が NULL の行は除外し、dept_id の昇順、同じ部署なら salary の降順で並べてください。
 
 -- ここに SQL を書いてください
+SELECT
+    name,
+    dept_id,
+    salary,
+    SUM(salary) OVER (
+        PARTITION BY
+            dept_id
+    ) AS 部署給与合計,
+    ROUND(
+        salary * 100.0 / SUM(salary) OVER (
+            PARTITION BY
+                dept_id
+        ),
+        1
+    ) AS 割合
+FROM
+    employees
+WHERE
+    dept_id IS NOT NULL
+ORDER BY
+    dept_id ASC,
+    salary DESC;

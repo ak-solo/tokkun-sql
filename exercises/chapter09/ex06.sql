@@ -4,3 +4,19 @@
 -- name、hire_date、salary、前の社員の給与、給与差 を取得してください。
 
 -- ここに SQL を書いてください
+SELECT
+    name,
+    hire_date,
+    salary,
+    LAG (salary) OVER (
+        ORDER BY
+            hire_date ASC
+    ) AS 前の社員の給与,
+    salary - LAG (salary) OVER (
+        ORDER BY
+            hire_date ASC
+    ) AS 給与差
+FROM
+    employees
+ORDER BY
+    hire_date ASC;
