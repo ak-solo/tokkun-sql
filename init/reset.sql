@@ -41,3 +41,8 @@ INSERT INTO employee_projects (employee_id, project_id, role) VALUES
     (5, 4, 'リーダー'),
     (7, 4, 'メンバー'),
     (10, 4, 'メンバー');
+
+-- SERIAL のシーケンスを挿入済みの最大値に合わせる
+SELECT setval('departments_id_seq', (SELECT MAX(id) FROM departments));
+SELECT setval('employees_id_seq',   (SELECT MAX(id) FROM employees));
+SELECT setval('projects_id_seq',    (SELECT MAX(id) FROM projects));
