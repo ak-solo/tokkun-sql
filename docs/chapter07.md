@@ -54,6 +54,32 @@ SET salary = salary * 1.05,
 WHERE id = 4;
 ```
 
+#### 別テーブルと結合して更新する（UPDATE ... FROM）
+
+PostgreSQL では `FROM` 句で別テーブルと結合し、その値を条件や更新値に使えます。
+
+```sql
+-- 所在地が '東京' の部署に属する社員の給与を 10% 上げる
+UPDATE employees
+SET salary = salary * 1.1
+FROM departments
+WHERE employees.dept_id = departments.id
+  AND departments.location = '東京';
+```
+
+`departments` テーブルを参照することで、`employees` テーブルだけでは持っていない `location` の情報を UPDATE の条件に使えます。上の例では東京にある部署（開発・人事）の社員が対象になります。
+
+サブクエリで書くこともできます。
+
+```sql
+-- 同じ結果をサブクエリで表現
+UPDATE employees
+SET salary = salary * 1.1
+WHERE dept_id IN (
+    SELECT id FROM departments WHERE location = '東京'
+);
+```
+
 ### 3. DELETE
 
 ```sql
@@ -75,17 +101,58 @@ RETURNING id, name;
 
 ### 5. トランザクション
 
-`BEGIN` で開始し、`COMMIT` で確定、`ROLLBACK` で取り消します。
-練習中にデータを元に戻したいときは `ROLLBACK` を使います。
+#### トランザクションとは
+
+**トランザクション**は、複数の SQL 操作を「ひとかたまり」として扱う仕組みです。トランザクション内の操作はすべて成功するか、すべて取り消されるか（**原子性**）のどちらかになります。
+
+たとえば「A さんの口座から B さんの口座へ送金する」処理は、「引き落とし」と「入金」の2つの UPDATE で構成されます。引き落としだけ成功して入金が失敗するとデータが壊れるため、2つの操作を必ず一緒に成功させる必要があります。これをトランザクションで保証します。
+
+#### 基本的な使い方
+
+```sql
+BEGIN;      -- トランザクション開始
+
+UPDATE employees SET salary = 99999 WHERE id = 1;
+SELECT id, name, salary FROM employees WHERE id = 1;  -- 確認（まだ確定していない）
+
+ROLLBACK;  -- すべての変更を取り消す
+-- または
+COMMIT;    -- すべての変更を確定する
+```
+
+`BEGIN` 〜 `COMMIT`/`ROLLBACK` の間は、自分のセッションからは変更済みのデータが見えますが、他のセッションからはまだ見えません。`COMMIT` した瞬間に全操作が確定し、他から参照できるようになります。
+
+#### 自動コミット
+
+`BEGIN` を使わない場合、各 SQL 文は**自動的に1つのトランザクション**として即時コミットされます。
+
+```sql
+-- これは即座に確定する（ROLLBACK で取り消せない）
+DELETE FROM employees WHERE id = 8;
+```
+
+練習中にデータを壊さないために、DML を実行するときは必ず `BEGIN` から始める習慣をつけましょう。
+
+#### 複数テーブルにまたがる操作
+
+トランザクションが特に重要なのは、複数テーブルを操作するときです。
 
 ```sql
 BEGIN;
 
-UPDATE employees SET salary = 99999 WHERE id = 1;
-SELECT id, name, salary FROM employees WHERE id = 1;  -- 確認
+-- 社員を追加し
+INSERT INTO employees (name, dept_id, salary, hire_date)
+VALUES ('健一', 2, 53000, '2024-04-01');
 
-ROLLBACK;  -- 元に戻す（練習後はROLLBACKしておくと安心）
+-- プロジェクトにも割り当てる
+INSERT INTO employee_projects (employee_id, project_id, role)
+VALUES (11, 3, 'メンバー');
+
+COMMIT;  -- 両方まとめて確定
 ```
+
+どちらかの INSERT が失敗した場合に `ROLLBACK` すれば、社員だけ追加されてプロジェクト未割り当て、という中途半端な状態を防げます。
+
 
 ---
 
