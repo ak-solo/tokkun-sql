@@ -5,3 +5,21 @@
 -- （dept_id が NULL の行は除外してください）
 
 -- ここに SQL を書いてください
+SELECT
+    d.name AS 部署名,
+    e.avg_salary AS 平均給与
+FROM
+    (
+        SELECT
+            dept_id,
+            ROUND(AVG(salary)) AS avg_salary
+        FROM
+            employees
+        GROUP BY
+            dept_id
+        HAVING
+            AVG(salary) >= 60000
+    ) e
+    INNER JOIN departments d ON e.dept_id = d.id
+ORDER BY
+    e.avg_salary DESC;

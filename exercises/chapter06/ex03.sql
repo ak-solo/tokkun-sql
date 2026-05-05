@@ -4,3 +4,21 @@
 -- （dept_id が NULL の社員は除外されます）
 
 -- ここに SQL を書いてください
+SELECT
+    name,
+    dept_id,
+    salary
+FROM
+    employees e
+WHERE
+    salary > (
+        SELECT
+            AVG(salary)
+        FROM
+            employees e2
+        WHERE
+            e2.dept_id = e.dept_id
+    )
+ORDER BY
+    dept_id ASC,
+    salary DESC;
