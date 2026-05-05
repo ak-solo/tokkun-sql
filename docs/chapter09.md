@@ -83,7 +83,7 @@ WITH RECURSIVE org AS (
     -- 再帰: 部下を追加
     SELECT e.id, e.name, e.manager_id, org.level + 1
     FROM employees e
-    JOIN org ON e.manager_id = org.id
+    INNER JOIN org ON e.manager_id = org.id
 )
 SELECT * FROM org ORDER BY level, id;
 ```
