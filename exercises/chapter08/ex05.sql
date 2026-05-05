@@ -3,6 +3,8 @@
 -- orders は products を参照しているため、削除順に注意してください。
 
 -- DROP TABLE 文をここに書いてください（2つ、IF EXISTS を使うこと）
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
 
 
 -- 確認: \dt
