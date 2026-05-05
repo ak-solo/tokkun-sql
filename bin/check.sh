@@ -108,7 +108,9 @@ test_dml() {
     return
   fi
 
-  if is_empty "$exercise_file"; then
+  # DMLテンプレートはBEGIN/SELECT/ROLLBACKを含むためis_emptyでは判定できない。
+  # INSERT/UPDATE/DELETEが書かれているかで未回答を判定する。
+  if ! grep -v '^\s*--' "$exercise_file" | grep -qiE '^\s*(INSERT|UPDATE|DELETE)\b'; then
     echo -e "${YELLOW}SKIP${RESET} $label (未回答)"
     SKIP=$((SKIP + 1))
     return
