@@ -123,6 +123,7 @@ role                              start_date
 | 07 | DML | `INSERT`、`UPDATE`、`DELETE`、`RETURNING` |
 | 08 | DDL | `CREATE TABLE`、制約、`ALTER TABLE` |
 | 09 | 応用 | CTE（`WITH`）、ウィンドウ関数 |
+| 10 | ビュー | `CREATE VIEW`、`CREATE OR REPLACE VIEW`、`DROP VIEW` |
 
 ---
 
@@ -167,9 +168,9 @@ bin/check.sh chapter01/ex01
 
 | チャプター | テスト方式 |
 |-----------|----------|
-| 01〜06, 09 | 学習者SQLと正解SQLの出力を比較（行の順序は問わない） |
-| 07 (DML)  | DBリセット → 学習者SQL実行 → 状態確認クエリで検証 |
-| 08 (DDL)  | 自動テスト対象外。`\d テーブル名` で手動確認 |
+| 01〜06, 09, 10 | 学習者SQLと正解SQLの出力を比較（行の順序は問わない） |
+| 07 (DML)       | DBリセット → 学習者SQL実行 → 状態確認クエリで検証 |
+| 08 (DDL)       | 自動テスト対象外。`\d テーブル名` で手動確認 |
 
 > **注意:** chapter03 の ORDER BY（並び順）は自動テストで検証されません。出力の行セットが正しいかのみ確認します。
 
