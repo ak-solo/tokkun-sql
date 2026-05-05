@@ -32,6 +32,10 @@
 SELECT COUNT(*), SUM(salary), ROUND(AVG(salary)) FROM employees;
 ```
 
+| count | sum    | round |
+|-------|--------|-------|
+| 10    | 588000 | 58800 |
+
 ### 2. GROUP BY
 
 指定したカラムの値ごとにグループ化して集計します。
@@ -42,6 +46,14 @@ SELECT dept_id, COUNT(*) AS 社員数
 FROM employees
 GROUP BY dept_id;
 ```
+
+| dept_id | 社員数 |
+|---------|--------|
+| 1       | 3      |
+| 2       | 2      |
+| 3       | 2      |
+| 4       | 2      |
+| NULL    | 1      |
 
 > `GROUP BY` を使うと、`SELECT` に書けるのは **グループ化したカラム** か **集計関数** だけです。
 
@@ -56,6 +68,13 @@ FROM employees
 GROUP BY dept_id
 HAVING COUNT(*) >= 2;
 ```
+
+| dept_id | 社員数 |
+|---------|--------|
+| 1       | 3      |
+| 2       | 2      |
+| 3       | 2      |
+| 4       | 2      |
 
 ### 4. WHERE と HAVING の違い
 
@@ -73,6 +92,13 @@ GROUP BY dept_id
 HAVING COUNT(*) >= 2
 ORDER BY dept_id;
 ```
+
+| dept_id | 社員数 | 給与合計 |
+|---------|--------|---------|
+| 1       | 3      | 215000  |
+| 2       | 2      | 105000  |
+| 3       | 2      | 123000  |
+| 4       | 2      | 100000  |
 
 ---
 
