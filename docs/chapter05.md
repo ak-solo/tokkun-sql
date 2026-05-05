@@ -5,6 +5,7 @@
 - `INNER JOIN` による内部結合
 - `LEFT JOIN` による外部結合
 - 複数テーブルの結合
+- `CROSS JOIN`（直積）とカンマ記法
 - 自己結合（self join）
 
 ---
@@ -114,7 +115,34 @@ INNER JOIN employee_projects ep ON e.id = ep.employee_id
 INNER JOIN projects p           ON ep.project_id = p.id;
 ```
 
-### 4. 自己結合
+### 4. CROSS JOIN（直積）とカンマ記法
+
+`CROSS JOIN` は `ON` 句を持たず、**左右のテーブルの全行の組み合わせ（直積）**を返します。
+左3行・右2行なら 3×2=6行になります。
+
+```sql
+SELECT a.name, b.name
+FROM table_a a
+CROSS JOIN table_b b;
+```
+
+FROM 句でカンマ区切りに並べる書き方は `CROSS JOIN` と同じ意味です。
+
+```sql
+-- 上と同じ結果
+SELECT a.name, b.name
+FROM table_a a, table_b b;
+```
+
+> **注意:** 両テーブルの行数が多い場合、結果が膨大になります。  
+> 通常の結合には `INNER JOIN` / `LEFT JOIN` を使いましょう。
+
+このカンマ記法は、**片方が必ず1行だけ返す** CTE（Chapter 09 で登場）と組み合わせると便利です。
+1行との CROSS JOIN は行数が増えないため、スカラー値を全行に付加する目的で使われます。
+
+---
+
+### 5. 自己結合
 
 同じテーブルを2回使って結合します。上司・部下の関係を取得するときに使います。
 テーブルエイリアスで区別します。
