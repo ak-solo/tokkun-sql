@@ -45,6 +45,13 @@ SQL の基本は「**どのテーブルから（FROM）**」「**何を取得す
 SELECT name, salary FROM employees;
 ```
 
+| name | salary |
+|------|--------|
+| 花子 | 75000  |
+| 一郎 | 60000  |
+| 美子 | 55000  |
+| …    | …      |
+
 ### 2. 全カラムの取得（`*`）
 
 `*`（アスタリスク）を使うと、すべてのカラムを取得できます。
@@ -52,6 +59,12 @@ SELECT name, salary FROM employees;
 ```sql
 SELECT * FROM employees;
 ```
+
+| id | name | dept_id | salary | hire_date  | manager_id |
+|----|------|---------|--------|------------|------------|
+|  1 | 花子 | 1       | 75000  | 2020-04-01 | NULL       |
+|  2 | 一郎 | 1       | 60000  | 2021-06-15 | 1          |
+| …  | …    | …       | …      | …          | …          |
 
 探索や確認には便利ですが、本番コードでは必要なカラムを明示するのが一般的です。
 
@@ -64,14 +77,27 @@ SELECT * FROM employees;
 SELECT name AS 氏名, salary AS 給与 FROM employees;
 ```
 
+| 氏名 | 給与  |
+|------|-------|
+| 花子 | 75000 |
+| 一郎 | 60000 |
+| 美子 | 55000 |
+| …    | …     |
+
 ### 4. 文字列結合（`||`）
 
 PostgreSQL では `||` 演算子で文字列を結合できます。
 
 ```sql
 SELECT name || 'さん' AS 敬称 FROM employees;
--- → '花子さん', '一郎さん', ...
 ```
+
+| 敬称     |
+|----------|
+| 花子さん |
+| 一郎さん |
+| 美子さん |
+| …        |
 
 ### 5. 計算式
 
@@ -81,6 +107,13 @@ SELECT の中で四則演算を使えます。
 SELECT name, salary * 1.1 AS 昇給後の給与 FROM employees;
 ```
 
+| name | 昇給後の給与 |
+|------|-------------|
+| 花子 | 82500.0     |
+| 一郎 | 66000.0     |
+| 美子 | 60500.0     |
+| …    | …           |
+
 ### 6. DISTINCT による重複除去
 
 `DISTINCT` を使うと重複した値を取り除いた結果が得られます。
@@ -88,6 +121,14 @@ SELECT name, salary * 1.1 AS 昇給後の給与 FROM employees;
 ```sql
 SELECT DISTINCT dept_id FROM employees;
 ```
+
+| dept_id |
+|---------|
+| 1       |
+| 2       |
+| 3       |
+| 4       |
+| NULL    |
 
 ---
 
