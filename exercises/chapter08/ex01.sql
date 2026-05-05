@@ -5,6 +5,11 @@
 --   price INTEGER
 
 -- CREATE TABLE 文をここに書いてください
-
+CREATE TABLE
+    products (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        price INtEGER
+    );
 
 -- 確認: \d products

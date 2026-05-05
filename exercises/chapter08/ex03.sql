@@ -3,7 +3,8 @@
 -- 追加後に \d products で確認し、最後に元に戻してください。
 
 -- ステップ 1: カラムを追加する ALTER TABLE 文をここに書いてください
-
+ALTER TABLE products
+ADD COLUMN description TEXT;
 
 -- ステップ 2: 確認: \d products
 
