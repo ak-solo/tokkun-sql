@@ -27,6 +27,24 @@ SELECT name, salary FROM employees ORDER BY salary DESC;   -- 降順（高い順
 SELECT name, salary FROM employees ORDER BY salary ASC;    -- 明示的に昇順
 ```
 
+昇順（`ORDER BY salary`）の場合:
+
+| name   | salary |
+|--------|--------|
+| 昭二   | 45000  |
+| あかね | 48000  |
+| 悠介   | 50000  |
+| …      | …      |
+
+降順（`ORDER BY salary DESC`）の場合:
+
+| name | salary |
+|------|--------|
+| 健太 | 80000  |
+| 花子 | 75000  |
+| 由子 | 65000  |
+| …    | …      |
+
 ### 2. 複数カラムでの並び替え
 
 カンマ区切りで優先順位を指定します。
@@ -37,6 +55,14 @@ SELECT name, dept_id, salary
 FROM employees
 ORDER BY dept_id ASC, salary DESC;
 ```
+
+| name | dept_id | salary |
+|------|---------|--------|
+| 健太 | 1       | 80000  |
+| 花子 | 1       | 75000  |
+| 一郎 | 1       | 60000  |
+| 美子 | 2       | 55000  |
+| …    | …       | …      |
 
 ### 3. NULL の扱い
 
@@ -59,6 +85,12 @@ ORDER BY dept_id ASC NULLS FIRST   -- NULL を先頭に
 SELECT name, salary FROM employees ORDER BY salary DESC LIMIT 3;
 ```
 
+| name | salary |
+|------|--------|
+| 健太 | 80000  |
+| 花子 | 75000  |
+| 由子 | 65000  |
+
 ### 5. OFFSET
 
 先頭から何行スキップするかを指定します。`LIMIT` と組み合わせてページネーションに使います。
@@ -67,6 +99,12 @@ SELECT name, salary FROM employees ORDER BY salary DESC LIMIT 3;
 -- 4番目〜6番目に給与が高い社員（先頭3件をスキップ）
 SELECT name, salary FROM employees ORDER BY salary DESC LIMIT 3 OFFSET 3;
 ```
+
+| name | salary |
+|------|--------|
+| 一郎 | 60000  |
+| 京子 | 58000  |
+| 美子 | 55000  |
 
 ---
 
