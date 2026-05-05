@@ -1,13 +1,23 @@
 -- 問題 7-3: UPDATE
 -- id = 2（一郎）の salary を 78000 に更新してください。
 -- 更新後、SELECT で確認してください。
-
 BEGIN;
 
 -- ステップ 1: UPDATE 文をここに書いてください
-
+UPDATE employees
+SET
+    salary = 78000
+WHERE
+    id = 2;
 
 -- ステップ 2: 確認クエリ（変更不要）
-SELECT id, name, salary FROM employees WHERE id = 2;
+SELECT
+    id,
+    name,
+    salary
+FROM
+    employees
+WHERE
+    id = 2;
 
 ROLLBACK;

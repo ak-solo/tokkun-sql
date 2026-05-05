@@ -1,13 +1,17 @@
 -- 問題 7-5: DELETE
 -- id = 8（Henry）を employees テーブルから削除してください。
 -- 削除後、COUNT(*) で社員数が 9 になることを確認してください。
-
 BEGIN;
 
 -- ステップ 1: DELETE 文をここに書いてください
-
+DELETE FROM employees
+WHERE
+    id = 8;
 
 -- ステップ 2: 確認クエリ（変更不要）
-SELECT COUNT(*) AS 社員数 FROM employees;
+SELECT
+    COUNT(*) AS 社員数
+FROM
+    employees;
 
 ROLLBACK;
