@@ -2,6 +2,7 @@
 
 ## このチャプターで学ぶこと
 
+- `UNION` / `UNION ALL` による結果セットの結合
 - CTE（`WITH` 句）による可読性の向上
 - 再帰 CTE による階層データの処理
 - ウィンドウ関数の基本（`OVER`, `PARTITION BY`, `ORDER BY`）
@@ -19,7 +20,26 @@
 
 ## 基礎知識
 
-### 1. CTE（Common Table Expression）
+### 1. UNION / UNION ALL
+
+複数の `SELECT` 結果を縦に結合します。
+
+```sql
+-- dept_id=1 の社員 と salary >= 60000 の社員 を重複なしでまとめる
+(SELECT name, salary FROM employees WHERE dept_id = 1)
+UNION
+(SELECT name, salary FROM employees WHERE salary >= 60000 AND dept_id IS NOT NULL)
+ORDER BY salary DESC;
+```
+
+| 演算子       | 説明                              |
+|-------------|-----------------------------------|
+| `UNION`     | 2つのクエリ結果を結合し重複を除く  |
+| `UNION ALL` | 重複を除かずすべての行を返す       |
+
+> **注意:** 両クエリのカラム数・データ型が一致していること。`ORDER BY` は末尾に1つだけ書きます。
+
+### 2. CTE（Common Table Expression）
 
 `WITH` 句で一時的な名前付きクエリを定義します。複雑なクエリを分解して読みやすくできます。
 
@@ -46,9 +66,10 @@ SELECT ...
 FROM dept_avg, total_avg;
 ```
 
-### 2. 再帰 CTE
+### 3. 再帰 CTE
 
 `WITH RECURSIVE` を使うと、階層構造（組織ツリーなど）を処理できます。
+アンカー部分と再帰部分を `UNION ALL` でつなぎます。
 
 ```sql
 WITH RECURSIVE org AS (
@@ -67,7 +88,7 @@ WITH RECURSIVE org AS (
 SELECT * FROM org ORDER BY level, id;
 ```
 
-### 3. ウィンドウ関数
+### 4. ウィンドウ関数
 
 `OVER()` 句を使い、グループ化せずに行ごとに集計・順位付けができます。
 `GROUP BY` と違い、元の行がそのまま残ります。
@@ -78,7 +99,7 @@ SELECT name, dept_id, salary,
 FROM employees;
 ```
 
-### 4. 順位付け関数
+### 5. 順位付け関数
 
 | 関数           | 同順位の扱い                        |
 |----------------|-------------------------------------|
@@ -86,7 +107,7 @@ FROM employees;
 | `RANK()`       | 同順位は同じ番号、次は飛ぶ（1,1,3） |
 | `DENSE_RANK()` | 同順位は同じ番号、次は続く（1,1,2） |
 
-### 5. 集計ウィンドウ関数
+### 6. 集計ウィンドウ関数
 
 `SUM()`, `AVG()` なども `OVER()` と組み合わせられます。
 
@@ -97,7 +118,7 @@ SELECT name, dept_id, salary,
 FROM employees;
 ```
 
-### 6. LAG / LEAD
+### 7. LAG / LEAD
 
 前の行・次の行の値を参照します。
 
@@ -115,9 +136,33 @@ FROM employees;
 
 ---
 
-### 問題 9-1: CTE
+### 問題 9-1: UNION / UNION ALL
 
 **ファイル:** `exercises/chapter09/ex01.sql`
+
+以下の2つのクエリを `UNION` で結合し、`name`、`salary` を取得してください。
+
+1. `dept_id = 1` の社員
+2. `salary >= 60000` かつ `dept_id IS NOT NULL` の社員
+
+`salary` の降順で並べてください。
+
+**期待される結果（4行）:**
+
+| name | salary |
+|------|--------|
+| 健太 | 80000  |
+| 花子 | 75000  |
+| 由子 | 65000  |
+| 一郎 | 60000  |
+
+> `UNION` を `UNION ALL` に変えると 7 行になります（花子・一郎・健太が両クエリに含まれるため）。確認してみましょう。
+
+---
+
+### 問題 9-2: CTE
+
+**ファイル:** `exercises/chapter09/ex02.sql`
 
 CTE を使い、**部署ごとの平均給与と全体平均給与の差額**を求めてください。
 `部署名`、`部署平均`、`全体平均`、`差額` を取得し、`部署平均` の降順で並べてください。
@@ -136,9 +181,9 @@ CTE を使い、**部署ごとの平均給与と全体平均給与の差額**を
 
 ---
 
-### 問題 9-2: 再帰 CTE
+### 問題 9-3: 再帰 CTE
 
-**ファイル:** `exercises/chapter09/ex02.sql`
+**ファイル:** `exercises/chapter09/ex03.sql`
 
 再帰 CTE を使い、`employees` テーブルの**組織階層**を表示してください。
 `id`、`name`、`level`（階層の深さ：最上位=1）を取得し、`level` の昇順、同じ `level` なら `id` の昇順で並べてください。
@@ -160,9 +205,9 @@ CTE を使い、**部署ごとの平均給与と全体平均給与の差額**を
 
 ---
 
-### 問題 9-3: ROW_NUMBER()
+### 問題 9-4: ROW_NUMBER()
 
-**ファイル:** `exercises/chapter09/ex03.sql`
+**ファイル:** `exercises/chapter09/ex04.sql`
 
 `employees` テーブルを使い、**部署内での給与ランキング**（高い順）を
 `ROW_NUMBER()` で求めてください。`dept_id` が NULL の行は除外し、
@@ -184,9 +229,9 @@ CTE を使い、**部署ごとの平均給与と全体平均給与の差額**を
 
 ---
 
-### 問題 9-4: SUM() OVER
+### 問題 9-5: SUM() OVER
 
-**ファイル:** `exercises/chapter09/ex04.sql`
+**ファイル:** `exercises/chapter09/ex05.sql`
 
 `employees` テーブルを使い、各社員の給与が**部署給与合計に占める割合**（%）を求めてください。
 `name`、`dept_id`、`salary`、`部署給与合計`、`割合`（小数点第1位まで）を取得してください。
@@ -210,9 +255,9 @@ CTE を使い、**部署ごとの平均給与と全体平均給与の差額**を
 
 ---
 
-### 問題 9-5: LAG()
+### 問題 9-6: LAG()
 
-**ファイル:** `exercises/chapter09/ex05.sql`
+**ファイル:** `exercises/chapter09/ex06.sql`
 
 `employees` テーブルを**入社日（`hire_date`）の昇順**に並べ、
 `LAG()` を使って「1つ前に入社した社員との給与差」を求めてください。
