@@ -42,33 +42,17 @@ tokkun-sql/
 │   ├── ref/chapterXX/      # 正解SQL（SELECT系チャプター）
 │   ├── verify/chapter07/   # DML後の状態確認クエリ
 │   └── expected/chapter07/ # DML後の期待値CSV
+├── .claude/
+│   └── rules/
+│       ├── database.md     # DB接続・psqlコマンド
+│       ├── testing.md      # 自動テストの仕組み
+│       └── git.md          # Gitコミット方針
 ├── .devcontainer/
 │   ├── devcontainer.json
 │   ├── docker-compose.yml  # app コンテナ + PostgreSQL コンテナ
 │   └── Dockerfile
 └── CLAUDE.md
 ```
-
----
-
-## データベース接続
-
-### ターミナルから psql を使う
-
-```bash
-# DATABASE_URL 環境変数が設定済みなので、これだけで接続できる
-psql "$DATABASE_URL"
-
-# SQL ファイルを実行する
-psql "$DATABASE_URL" -f exercises/chapter01/ex01.sql
-
-# 1行クエリを実行する
-psql "$DATABASE_URL" -c "SELECT * FROM employees;"
-```
-
-### VSCode SQLTools 拡張を使う
-
-サイドバーの「SQLTools」アイコン → `tokkun-sql` 接続 → SQL ファイルを開いて実行ボタン
 
 ---
 
@@ -126,80 +110,3 @@ role                              start_date
 | 09 | 応用 | CTE（`WITH`）、ウィンドウ関数 |
 | 10 | ビュー | `CREATE VIEW`、`CREATE OR REPLACE VIEW`、`DROP VIEW` |
 | 11 | 総合演習 | JOIN・サブクエリ・ウィンドウ関数・CTE の複合問題 |
-
----
-
-## 便利な psql コマンド
-
-```sql
-\dt             -- テーブル一覧を表示
-\d employees    -- employees テーブルの定義を表示
-\x              -- 縦表示モードの切り替え（wide な結果を見やすくする）
-\q              -- psql を終了
-```
-
----
-
-## 確認コマンド
-
-```bash
-# クエリを実行する
-psql "$DATABASE_URL" -f exercises/chapter01/ex01.sql
-
-# playground で自由に試す
-psql "$DATABASE_URL" -f playground/scratch.sql
-
-# 対話モードで接続する
-psql "$DATABASE_URL"
-```
-
-## 自動テスト
-
-```bash
-# 全チャプターをテスト
-bin/check.sh
-
-# 1チャプターだけテスト
-bin/check.sh chapter01
-
-# 1問だけテスト
-bin/check.sh chapter01/ex01
-```
-
-### テストの仕組み
-
-| チャプター | テスト方式 |
-|-----------|----------|
-| 01〜06, 09, 10, 11 | 学習者SQLと正解SQLの出力を比較（行の順序は問わない） |
-| 07 (DML)       | DBリセット → 学習者SQL実行 → 状態確認クエリで検証 |
-| 08 (DDL)       | 自動テスト対象外。`\d テーブル名` で手動確認 |
-
-> **注意:** chapter03 の ORDER BY（並び順）は自動テストで検証されません。出力の行セットが正しいかのみ確認します。
-
-## Git コミット方針
-
-- コミットは **変更理由（目的）ごとに分割**すること
-- 1コミット = 1つの論理的な変更（機能追加・バグ修正・リファクタリングを混在させない）
-- コミット前に変更内容を確認し、複数の目的が混在していれば必ず分割する
-- ファイルをまとめて `git add .` せず、目的ごとに `git add <ファイル>` で個別にステージングすること
-- コミットメッセージは「何をしたか」ではなく「**なぜ**その変更をしたか」を書く
-
-### コミットメッセージのプレフィックス
-
-コミットメッセージの先頭に以下のプレフィックスをつけること。
-
-| プレフィックス | 用途 |
-|----------------|------|
-| `feat:` | 新機能の追加 |
-| `fix:` | バグ修正 |
-| `docs:` | ドキュメントのみの変更 |
-| `style:` | コードの見た目の変更（機能に影響しない空白・セミコロン等） |
-| `refactor:` | バグ修正でも機能追加でもないコード変更（リファクタリング） |
-| `chore:` | ビルド設定・ライブラリ更新・CI 設定など |
-
-### 分割の例
-
-| 悪い例（1コミット） | 良い例（分割） |
-|---------------------|----------------|
-| 問題追加 + テスト追加 + CLAUDE.md 更新 | ① 問題ファイル追加 ② テスト追加 ③ CLAUDE.md 更新 |
-| バグ修正 + 新機能追加 | ① バグ修正 ② 新機能追加 |
