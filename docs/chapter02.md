@@ -33,17 +33,18 @@
 
 ## 基礎知識
 
+> **例で使うテーブルについて:** 以下の例では架空の `books`（書籍）テーブルを使います。演習問題で使う `employees` テーブルとは異なりますが、SQL の書き方は同じです。
+
 ### 1. 比較演算子
 
 ```sql
-SELECT name, salary FROM employees WHERE salary > 60000;
+SELECT title, price FROM books WHERE price > 3000;
 ```
 
-| name | salary |
-|------|--------|
-| 花子 | 75000  |
-| 由子 | 65000  |
-| 健太 | 80000  |
+| title          | price |
+|----------------|-------|
+| Python基礎     | 3200  |
+| データ分析実践 | 3800  |
 
 | 演算子 | 意味             |
 |--------|-----------------|
@@ -59,14 +60,14 @@ SELECT name, salary FROM employees WHERE salary > 60000;
 複数の条件を組み合わせます。
 
 ```sql
--- dept_id が 1 かつ salary が 70000 以上
-SELECT name FROM employees WHERE dept_id = 1 AND salary >= 70000;
+-- genre_id が 1 かつ price が 3000 以上
+SELECT title FROM books WHERE genre_id = 1 AND price >= 3000;
 
--- dept_id が 2 または 4
-SELECT name FROM employees WHERE dept_id = 2 OR dept_id = 4;
+-- genre_id が 2 または 3
+SELECT title FROM books WHERE genre_id = 2 OR genre_id = 3;
 
--- salary が 60000 超でない（= 60000 以下）
-SELECT name FROM employees WHERE NOT salary > 60000;
+-- price が 3000 超でない（= 3000 以下）
+SELECT title FROM books WHERE NOT price > 3000;
 ```
 
 ### 3. LIKE によるパターンマッチング
@@ -74,10 +75,10 @@ SELECT name FROM employees WHERE NOT salary > 60000;
 `%` は0文字以上の任意の文字列、`_` は1文字を表します。
 
 ```sql
-SELECT name FROM employees WHERE name LIKE '花%';   -- '花' で始まる → 花子
-SELECT name FROM employees WHERE name LIKE '%子';   -- '子' で終わる → 花子, 美子, 由子, 京子
-SELECT name FROM employees WHERE name LIKE '%介%';  -- '介' を含む → 悠介
-SELECT name FROM employees WHERE name LIKE '_子';   -- ちょうど2文字で '子' で終わる
+SELECT title FROM books WHERE title LIKE 'SQL%';    -- 'SQL' で始まる → SQL入門
+SELECT title FROM books WHERE title LIKE '%入門';   -- '入門' で終わる → SQL入門, デザイン入門
+SELECT title FROM books WHERE title LIKE '%分析%';  -- '分析' を含む → データ分析実践
+SELECT title FROM books WHERE title LIKE '___入門'; -- 3文字 + '入門' の形
 ```
 
 > `LIKE` は大文字小文字を区別します。区別しない場合は `ILIKE` を使います。
@@ -87,7 +88,7 @@ SELECT name FROM employees WHERE name LIKE '_子';   -- ちょうど2文字で '
 `BETWEEN a AND b` は `>= a AND <= b` と同じです（両端を含む）。
 
 ```sql
-SELECT name, salary FROM employees WHERE salary BETWEEN 50000 AND 65000;
+SELECT title, price FROM books WHERE price BETWEEN 2000 AND 3000;
 ```
 
 ### 5. IN によるリスト指定
@@ -96,8 +97,8 @@ SELECT name, salary FROM employees WHERE salary BETWEEN 50000 AND 65000;
 
 ```sql
 -- この2つは同じ結果
-SELECT name FROM employees WHERE dept_id = 2 OR dept_id = 4;
-SELECT name FROM employees WHERE dept_id IN (2, 4);
+SELECT title FROM books WHERE genre_id = 2 OR genre_id = 3;
+SELECT title FROM books WHERE genre_id IN (2, 3);
 ```
 
 ### 6. IS NULL / IS NOT NULL
@@ -112,19 +113,19 @@ NULL は「値が存在しない」ことを表す特別な状態です。`0`（
 | `''` | 空の文字列（値は存在する） |
 | `NULL` | 値が存在しない・不明 |
 
-`employees` テーブルでは、昭二（id=8）の `dept_id` が NULL です。これは「どの部署にも属していない」ことを意味します。
+`books` テーブルでは、「料理の基礎」の `genre_id` が NULL です。これは「ジャンル未分類」であることを意味します。
 
 #### NULL の判定
 
 NULL かどうかの判定には `=` が使えません。必ず `IS NULL` / `IS NOT NULL` を使います。
 
 ```sql
--- NG: dept_id = NULL は常に偽になる
-SELECT name FROM employees WHERE dept_id = NULL;
+-- NG: genre_id = NULL は常に偽になる
+SELECT title FROM books WHERE genre_id = NULL;
 
 -- OK
-SELECT name FROM employees WHERE dept_id IS NULL;
-SELECT name FROM employees WHERE dept_id IS NOT NULL;
+SELECT title FROM books WHERE genre_id IS NULL;
+SELECT title FROM books WHERE genre_id IS NOT NULL;
 ```
 
 ---

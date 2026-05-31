@@ -20,28 +20,30 @@
 
 ## 基礎知識
 
+> **例で使うテーブルについて:** 以下の例では架空の `books`（書籍）・`genres`（ジャンル）・`categories`（カテゴリ）テーブルを使います。演習問題で使うテーブルとは異なりますが、SQL の書き方は同じです。
+
 ### 1. UNION / UNION ALL
 
 複数の `SELECT` 結果を縦に結合します。両クエリのカラム数・データ型が一致している必要があります。
 
 ```sql
--- dept_id=1 の社員 と salary >= 60000 の社員 を重複なしでまとめる
-(SELECT name, salary FROM employees WHERE dept_id = 1)
+-- genre_id=1 の書籍 と price >= 2500 の書籍 を重複なしでまとめる
+(SELECT title, price FROM books WHERE genre_id = 1)
 UNION
-(SELECT name, salary FROM employees WHERE salary >= 60000 AND dept_id IS NOT NULL)
-ORDER BY salary DESC;
+(SELECT title, price FROM books WHERE price >= 2500 AND genre_id IS NOT NULL)
+ORDER BY price DESC;
 ```
 
-花子・一郎・健太は両方の条件に当てはまりますが、`UNION` は重複を取り除くので4行になります。
+SQL入門・Python基礎・データ分析実践は両方の条件に当てはまりますが、`UNION` は重複を取り除くので4行になります。
 
-| name | salary |
-|------|--------|
-| 健太 | 80000  |
-| 花子 | 75000  |
-| 由子 | 65000  |
-| 一郎 | 60000  |
+| title          | price |
+|----------------|-------|
+| データ分析実践 | 3800  |
+| Python基礎     | 3200  |
+| SQL入門        | 2800  |
+| デザイン入門   | 2500  |
 
-`UNION ALL` に変えると重複を残すため、花子・一郎・健太が2回ずつ含まれ7行になります。
+`UNION ALL` に変えると重複を残すため、SQL入門・Python基礎・データ分析実践が2回ずつ含まれ7行になります。
 
 | 演算子       | 説明                              | 行数（この例） |
 |-------------|-----------------------------------|--------------|
@@ -55,46 +57,44 @@ ORDER BY salary DESC;
 `WITH` 句で一時的な名前付きクエリを定義します。複雑なクエリを「名前の付いた部品」に分解できるので、ネストの深いサブクエリより読みやすくなります。
 
 ```sql
-WITH high_salary AS (
-    SELECT id, name, salary
-    FROM employees
-    WHERE salary > 60000
+WITH high_price AS (
+    SELECT id, title, price
+    FROM books
+    WHERE price > 3000
 )
-SELECT * FROM high_salary ORDER BY salary DESC;
+SELECT * FROM high_price ORDER BY price DESC;
 ```
 
-CTE の中身（`high_salary`）は、後続の `SELECT` から通常のテーブルのように参照できます。
+CTE の中身（`high_price`）は、後続の `SELECT` から通常のテーブルのように参照できます。
 
-| id | name | salary |
-|----|------|--------|
-|  6 | 健太 | 80000  |
-|  1 | 花子 | 75000  |
-|  5 | 由子 | 65000  |
+| id | title          | price |
+|----|----------------|-------|
+|  3 | データ分析実践 | 3800  |
+|  2 | Python基礎     | 3200  |
 
 複数の CTE をカンマで繋いで定義することもできます。後から定義した CTE は前の CTE を参照できます。
 
 ```sql
 WITH
-dept_avg AS (
-    SELECT dept_id, ROUND(AVG(salary)) AS avg_sal
-    FROM employees
-    GROUP BY dept_id
+genre_avg AS (
+    SELECT genre_id, ROUND(AVG(price)) AS avg_price
+    FROM books
+    GROUP BY genre_id
 ),
 total_avg AS (
-    SELECT ROUND(AVG(salary)) AS avg_sal FROM employees
+    SELECT ROUND(AVG(price)) AS avg_price FROM books
 )
-SELECT d.dept_id, d.avg_sal AS 部署平均, t.avg_sal AS 全体平均
-FROM dept_avg d, total_avg t
-ORDER BY d.dept_id NULLS LAST;
+SELECT g.genre_id, g.avg_price AS ジャンル平均, t.avg_price AS 全体平均
+FROM genre_avg g, total_avg t
+ORDER BY g.genre_id NULLS LAST;
 ```
 
-| dept_id | 部署平均 | 全体平均 |
-|---------|---------|---------|
-| 1       | 71667   | 58800   |
-| 2       | 52500   | 58800   |
-| 3       | 61500   | 58800   |
-| 4       | 50000   | 58800   |
-| NULL    | 45000   | 58800   |
+| genre_id | ジャンル平均 | 全体平均 |
+|----------|------------|---------|
+| 1        | 3267       | 2686    |
+| 2        | 2350       | 2686    |
+| 3        | 2350       | 2686    |
+| NULL     | 1500       | 2686    |
 
 ### 3. 再帰 CTE
 
@@ -102,44 +102,42 @@ ORDER BY d.dept_id NULLS LAST;
 アンカー部分（起点）と再帰部分を `UNION ALL` でつなぎます。
 
 ```sql
-WITH RECURSIVE org AS (
-    -- アンカー: 最上位（上司がいない社員）
-    SELECT id, name, manager_id, 1 AS level
-    FROM employees
-    WHERE manager_id IS NULL
+WITH RECURSIVE cat_tree AS (
+    -- アンカー: 最上位カテゴリ（親がない）
+    SELECT id, name, parent_id, 1 AS level
+    FROM categories
+    WHERE parent_id IS NULL
 
     UNION ALL
 
-    -- 再帰: org に含まれる社員の部下を追加
-    SELECT e.id, e.name, e.manager_id, org.level + 1
-    FROM employees e
-    INNER JOIN org ON e.manager_id = org.id
+    -- 再帰: cat_tree に含まれるカテゴリの子を追加
+    SELECT c.id, c.name, c.parent_id, cat_tree.level + 1
+    FROM categories c
+    INNER JOIN cat_tree ON c.parent_id = cat_tree.id
 )
-SELECT * FROM org ORDER BY level, id;
+SELECT * FROM cat_tree ORDER BY level, id;
 ```
 
-**実行のしくみ:**
+**実行のしくみ（`categories` テーブル: 理系/文系/IT/数学/言語学/Python/SQL）:**
 
 | ステップ | 処理内容 | 追加される行 |
 |---------|---------|------------|
-| 1回目（アンカー） | `manager_id IS NULL` の社員を取得 | 花子(level=1), 美子(level=1), 由子(level=1), あかね(level=1), 昭二(level=1) |
-| 2回目（再帰） | level=1 の社員を上司に持つ社員を取得 | 一郎(level=2), 悠介(level=2), 健太(level=2), 京子(level=2), 翔太(level=2) |
-| 3回目 | level=2 の社員を上司に持つ社員 → 該当なし | （なし）→ 終了 |
+| 1回目（アンカー） | `parent_id IS NULL` のカテゴリを取得 | 理系(level=1), 文系(level=1) |
+| 2回目（再帰） | level=1 を親に持つカテゴリを取得 | IT(level=2), 数学(level=2), 言語学(level=2) |
+| 3回目（再帰） | level=2 を親に持つカテゴリを取得 | Python(level=3), SQL(level=3) |
+| 4回目 | level=3 を親に持つカテゴリ → 該当なし | （なし）→ 終了 |
 
 **実行結果:**
 
-| id | name   | manager_id | level |
-|----|--------|------------|-------|
-|  1 | 花子   | NULL       | 1     |
-|  3 | 美子   | NULL       | 1     |
-|  5 | 由子   | NULL       | 1     |
-|  7 | あかね | NULL       | 1     |
-|  8 | 昭二   | NULL       | 1     |
-|  2 | 一郎   | 1          | 2     |
-|  4 | 悠介   | 3          | 2     |
-|  6 | 健太   | 1          | 2     |
-|  9 | 京子   | 5          | 2     |
-| 10 | 翔太   | 7          | 2     |
+| id | name   | parent_id | level |
+|----|--------|-----------|-------|
+|  1 | 理系   | NULL      | 1     |
+|  2 | 文系   | NULL      | 1     |
+|  3 | IT     | 1         | 2     |
+|  4 | 数学   | 1         | 2     |
+|  5 | 言語学 | 2         | 2     |
+|  6 | Python | 3         | 3     |
+|  7 | SQL    | 3         | 3     |
 
 ### 4. ウィンドウ関数
 
@@ -147,9 +145,10 @@ SELECT * FROM org ORDER BY level, id;
 **`GROUP BY` と違い、元の行がそのまま残ります。**
 
 ```sql
-SELECT name, dept_id, salary,
-       ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS 順位
-FROM employees;
+SELECT title, genre_id, price,
+       ROW_NUMBER() OVER (PARTITION BY genre_id ORDER BY price DESC) AS 順位
+FROM books
+WHERE genre_id IS NOT NULL;
 ```
 
 `OVER()` の中に書ける句は2つです。
@@ -159,22 +158,19 @@ FROM employees;
 | `PARTITION BY` | グループを分ける（`GROUP BY` に似ているが行は消えない） |
 | `ORDER BY`     | ウィンドウ内での並び順（順位付けや累積計算に使う）      |
 
-この例は「`dept_id` ごとに分け（`PARTITION BY dept_id`）、給与の高い順（`ORDER BY salary DESC`）に連番を振る」という意味です。
+この例は「`genre_id` ごとに分け（`PARTITION BY genre_id`）、価格の高い順（`ORDER BY price DESC`）に連番を振る」という意味です。
 
-| name   | dept_id | salary | 順位 |
-|--------|---------|--------|------|
-| 健太   | 1       | 80000  | 1    |
-| 花子   | 1       | 75000  | 2    |
-| 一郎   | 1       | 60000  | 3    |
-| 美子   | 2       | 55000  | 1    |
-| 悠介   | 2       | 50000  | 2    |
-| 由子   | 3       | 65000  | 1    |
-| 京子   | 3       | 58000  | 2    |
-| 翔太   | 4       | 52000  | 1    |
-| あかね | 4       | 48000  | 2    |
-| 昭二   | NULL    | 45000  | 1    |
+| title          | genre_id | price | 順位 |
+|----------------|----------|-------|------|
+| データ分析実践 | 1        | 3800  | 1    |
+| Python基礎     | 1        | 3200  | 2    |
+| SQL入門        | 1        | 2800  | 3    |
+| デザイン入門   | 2        | 2500  | 1    |
+| イラスト技法   | 2        | 2200  | 2    |
+| 写真撮影術     | 3        | 2900  | 1    |
+| 英語文法       | 3        | 1800  | 2    |
 
-`dept_id` が変わると順位がリセットされているのが分かります。`GROUP BY` なら部署ごとに1行に集約されますが、ウィンドウ関数では全10行がそのまま残ります。
+`genre_id` が変わると順位がリセットされているのが分かります。`GROUP BY` ならジャンルごとに1行に集約されますが、ウィンドウ関数では全行がそのまま残ります。
 
 ### 5. 順位付け関数
 
@@ -202,50 +198,49 @@ FROM employees;
 `SUM()`, `AVG()` なども `OVER()` と組み合わせられます。
 
 ```sql
--- 部署ごとの給与合計を各行に付加する
-SELECT name, dept_id, salary,
-       SUM(salary) OVER (PARTITION BY dept_id) AS 部署給与合計
-FROM employees;
+-- ジャンルごとの合計金額を各行に付加する
+SELECT title, genre_id, price,
+       SUM(price) OVER (PARTITION BY genre_id) AS ジャンル合計金額
+FROM books
+WHERE genre_id IS NOT NULL;
 ```
 
-`GROUP BY dept_id` と `SUM(salary)` を使った場合は部署ごとに1行に集約されますが、ウィンドウ関数では全行を残したまま「その行が属するグループの合計」を各行に付加できます。
+`GROUP BY genre_id` と `SUM(price)` を使った場合はジャンルごとに1行に集約されますが、ウィンドウ関数では全行を残したまま「その行が属するグループの合計」を各行に付加できます。
 
-| name   | dept_id | salary | 部署給与合計 |
-|--------|---------|--------|------------|
-| 花子   | 1       | 75000  | 215000     |
-| 一郎   | 1       | 60000  | 215000     |
-| 健太   | 1       | 80000  | 215000     |
-| 美子   | 2       | 55000  | 105000     |
-| 悠介   | 2       | 50000  | 105000     |
-| 由子   | 3       | 65000  | 123000     |
-| 京子   | 3       | 58000  | 123000     |
-| あかね | 4       | 48000  | 100000     |
-| 翔太   | 4       | 52000  | 100000     |
-| 昭二   | NULL    | 45000  | 45000      |
+| title          | genre_id | price | ジャンル合計金額 |
+|----------------|----------|-------|--------------|
+| データ分析実践 | 1        | 3800  | 9800         |
+| Python基礎     | 1        | 3200  | 9800         |
+| SQL入門        | 1        | 2800  | 9800         |
+| デザイン入門   | 2        | 2500  | 4700         |
+| イラスト技法   | 2        | 2200  | 4700         |
+| 写真撮影術     | 3        | 2900  | 4700         |
+| 英語文法       | 3        | 1800  | 4700         |
 
-同じ部署の行には同じ `部署給与合計` が付いており、ここから `salary / 部署給与合計` で「部署内での給与の占める割合」を計算するといった応用ができます（問題 9-5）。
+同じジャンルの行には同じ `ジャンル合計金額` が付いており、ここから `price / ジャンル合計金額` で「ジャンル内での価格の占める割合」を計算するといった応用ができます（問題 9-5）。
 
 ### 7. LAG / LEAD
 
 `ORDER BY` で並べた前後の行の値を参照します。前の行には `LAG()`、次の行には `LEAD()` を使います。前後の行がない場合は `NULL` が返ります。
 
 ```sql
--- 入社日順に並べ、前後の社員の給与を取得
-SELECT name, hire_date, salary,
-       LAG(salary)  OVER (ORDER BY hire_date) AS 前の社員の給与,
-       LEAD(salary) OVER (ORDER BY hire_date) AS 次の社員の給与
-FROM employees;
+-- 価格の安い順に並べ、前後の書籍の価格を取得
+SELECT title, price,
+       LAG(price)  OVER (ORDER BY price) AS 前の書籍の価格,
+       LEAD(price) OVER (ORDER BY price) AS 次の書籍の価格
+FROM books
+WHERE price IS NOT NULL;
 ```
 
-| name | hire_date  | salary | 前の社員の給与 | 次の社員の給与 |
-|------|------------|--------|--------------|--------------|
-| 健太 | 2017-05-20 | 80000  | NULL         | 65000        |
-| 由子 | 2018-09-01 | 65000  | 80000        | 55000        |
-| 美子 | 2019-03-01 | 55000  | 65000        | 75000        |
-| 花子 | 2020-04-01 | 75000  | 55000        | 52000        |
-| …    | …          | …      | …            | …            |
+| title          | price | 前の書籍の価格 | 次の書籍の価格 |
+|----------------|-------|--------------|--------------|
+| 英語文法       | 1800  | NULL         | 2200         |
+| イラスト技法   | 2200  | 1800         | 2500         |
+| デザイン入門   | 2500  | 2200         | 2800         |
+| SQL入門        | 2800  | 2500         | 2900         |
+| …              | …     | …            | …            |
 
-先頭行の `前の社員の給与` と末尾行の `次の社員の給与` は `NULL` になります。「前月比」「前年比」など時系列の差分を計算するときによく使います。
+先頭行の `前の書籍の価格` と末尾行の `次の書籍の価格` は `NULL` になります。「前月比」「前年比」など時系列の差分を計算するときによく使います。
 
 ---
 

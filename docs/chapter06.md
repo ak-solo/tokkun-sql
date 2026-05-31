@@ -18,15 +18,17 @@
 
 ## 基礎知識
 
+> **例で使うテーブルについて:** 以下の例では架空の `books`（書籍）・`reviews`（レビュー）テーブルを使います。演習問題で使うテーブルとは異なりますが、サブクエリの書き方は同じです。
+
 ### 1. スカラーサブクエリ
 
 1行1カラムの値を返すサブクエリです。`WHERE` 句の比較値として使います。
 
 ```sql
--- 平均給与より高い社員
-SELECT name, salary
-FROM employees
-WHERE salary > (SELECT AVG(salary) FROM employees);
+-- 平均価格より高い書籍
+SELECT title, price
+FROM books
+WHERE price > (SELECT AVG(price) FROM books);
 ```
 
 括弧の中のクエリが先に実行され、その結果（単一の値）を外側のクエリが使います。
@@ -36,10 +38,10 @@ WHERE salary > (SELECT AVG(salary) FROM employees);
 サブクエリが返すリストを `IN` で参照します。
 
 ```sql
--- プロジェクトに参加したことがある社員
-SELECT name
-FROM employees
-WHERE id IN (SELECT employee_id FROM employee_projects);
+-- レビューが付いている書籍
+SELECT title
+FROM books
+WHERE id IN (SELECT book_id FROM reviews);
 ```
 
 ### 3. 相関サブクエリ
@@ -47,13 +49,13 @@ WHERE id IN (SELECT employee_id FROM employee_projects);
 外側のクエリの各行を参照するサブクエリです。行ごとに実行されます。
 
 ```sql
--- 自分の部署の平均より給与が高い社員
-SELECT name, dept_id, salary
-FROM employees e
-WHERE salary > (
-    SELECT AVG(salary)
-    FROM employees e2
-    WHERE e2.dept_id = e.dept_id  -- 外側のクエリの dept_id を参照
+-- 同じジャンルの平均より価格が高い書籍
+SELECT title, genre_id, price
+FROM books b
+WHERE price > (
+    SELECT AVG(price)
+    FROM books b2
+    WHERE b2.genre_id = b.genre_id  -- 外側のクエリの genre_id を参照
 );
 ```
 
@@ -62,13 +64,13 @@ WHERE salary > (
 サブクエリに1行でも結果があれば真を返します。
 
 ```sql
--- リーダーとして参加しているプロジェクトがある社員
-SELECT name
-FROM employees e
+-- 評価 5 のレビューが付いている書籍
+SELECT title
+FROM books b
 WHERE EXISTS (
     SELECT 1
-    FROM employee_projects ep
-    WHERE ep.employee_id = e.id AND ep.role = 'リーダー'
+    FROM reviews r
+    WHERE r.book_id = b.id AND r.rating = 5
 );
 ```
 
@@ -78,11 +80,11 @@ WHERE EXISTS (
 
 ```sql
 SELECT * FROM (
-    SELECT dept_id, ROUND(AVG(salary)) AS avg_salary
-    FROM employees
-    GROUP BY dept_id
+    SELECT genre_id, ROUND(AVG(price)) AS avg_price
+    FROM books
+    GROUP BY genre_id
 ) sub
-WHERE sub.avg_salary >= 60000;
+WHERE sub.avg_price >= 2500;
 ```
 
 ---

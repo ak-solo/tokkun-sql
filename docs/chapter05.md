@@ -32,87 +32,89 @@ employee_projects.project_id  → projects.id
 
 ## 基礎知識
 
+> **例で使うテーブルについて:** 以下の例では架空の `books`（書籍）・`genres`（ジャンル）・`reviews`（レビュー）テーブルを使います。演習問題で使うテーブルとは異なりますが、JOIN の書き方は同じです。
+
 ### 1. INNER JOIN
 
 **両方のテーブルに一致する行だけ**を結合します。どちらかにしか存在しない行は除外されます。
 
 まず、結合前の2つのテーブルを見てみましょう（抜粋）。
 
-**employees（左テーブル）**
+**books（左テーブル）**
 
-| id | name | dept_id |
-|----|------|---------|
-| 1  | 花子 | 1       |
-| 6  | 健太 | 1       |
-| 8  | 昭二 | **NULL** |
+| id | title          | genre_id |
+|----|----------------|----------|
+| 1  | SQL入門        | 1        |
+| 2  | Python基礎     | 1        |
+| 7  | 料理の基礎     | **NULL** |
 
-**departments（右テーブル）**
+**genres（右テーブル）**
 
-| id | name |
-|----|------|
-| 1  | 開発 |
-| 5  | 経理 |
+| id | name         |
+|----|--------------|
+| 1  | プログラミング |
+| 4  | 料理          |
 
-`ON e.dept_id = d.id` で結合すると、`dept_id = 1` の花子・健太だけが一致します。
-昭二（dept_id が NULL）と経理（id=5 の社員がいない）は**どちらも除外**されます。
+`ON b.genre_id = g.id` で結合すると、`genre_id = 1` の SQL入門・Python基礎だけが一致します。
+料理の基礎（genre_id が NULL）と料理（id=4 の書籍がない）は**どちらも除外**されます。
 
 **INNER JOIN の結果**
 
-| name | 部署名 |
-|------|--------|
-| 花子 | 開発   |
-| 健太 | 開発   |
+| title      | ジャンル名       |
+|------------|----------------|
+| SQL入門    | プログラミング   |
+| Python基礎 | プログラミング   |
 
 ```sql
-SELECT e.name, d.name AS 部署名
-FROM employees e
-INNER JOIN departments d ON e.dept_id = d.id;
+SELECT b.title, g.name AS ジャンル名
+FROM books b
+INNER JOIN genres g ON b.genre_id = g.id;
 ```
 
-> テーブルに別名（エイリアス）をつけると、カラム名の衝突を避けられます（`e`、`d`）。
+> テーブルに別名（エイリアス）をつけると、カラム名の衝突を避けられます（`b`、`g`）。
 
 > `JOIN` だけ書いた場合も `INNER JOIN` と同じ意味です。本教材では明示的に `INNER JOIN` と書きます。
 
 ### 2. LEFT JOIN
 
 **左テーブルの全行を保持**し、右テーブルに一致する行がなければ NULL で埋めます。
-右テーブルだけにある行（経理）は含まれません。
+右テーブルだけにある行（料理ジャンル）は含まれません。
 
 同じ2テーブルを LEFT JOIN すると：
 
 **LEFT JOIN の結果**
 
-| name | 部署名 |
-|------|--------|
-| 花子 | 開発   |
-| 健太 | 開発   |
-| 昭二 | **NULL** |
+| title          | ジャンル名       |
+|----------------|----------------|
+| SQL入門        | プログラミング   |
+| Python基礎     | プログラミング   |
+| 料理の基礎     | **NULL**        |
 
-昭二は右テーブルに一致する部署がないため `NULL` になりますが、**行自体は残ります**。
+料理の基礎は右テーブルに一致するジャンルがないため `NULL` になりますが、**行自体は残ります**。
 
 ```sql
-SELECT e.name, d.name AS 部署名
-FROM employees e
-LEFT JOIN departments d ON e.dept_id = d.id;
+SELECT b.title, g.name AS ジャンル名
+FROM books b
+LEFT JOIN genres g ON b.genre_id = g.id;
 ```
 
 #### INNER JOIN と LEFT JOIN の違いまとめ
 
-| 状況                         | INNER JOIN | LEFT JOIN |
-|------------------------------|-----------|-----------|
-| 両テーブルに一致あり（花子）  | 含まれる   | 含まれる   |
-| 左だけに存在（昭二、dept_id=NULL） | **除外** | 含まれる（部署名=NULL） |
-| 右だけに存在（経理、社員なし） | 除外      | 除外       |
+| 状況                                     | INNER JOIN | LEFT JOIN |
+|------------------------------------------|-----------|-----------|
+| 両テーブルに一致あり（SQL入門）           | 含まれる   | 含まれる   |
+| 左だけに存在（料理の基礎、genre_id=NULL） | **除外**   | 含まれる（ジャンル名=NULL） |
+| 右だけに存在（料理ジャンル、書籍なし）    | 除外       | 除外       |
 
 ### 3. 複数テーブルの結合
 
 `JOIN` を連続して書くことで、3テーブル以上を結合できます。
 
 ```sql
-SELECT e.name, p.name AS プロジェクト名, ep.role
-FROM employees e
-INNER JOIN employee_projects ep ON e.id = ep.employee_id
-INNER JOIN projects p           ON ep.project_id = p.id;
+SELECT c.name AS 顧客名, b.title AS 書籍名, r.rating
+FROM customers c
+INNER JOIN reviews r ON c.id = r.customer_id
+INNER JOIN books b   ON r.book_id = b.id;
 ```
 
 ### 4. CROSS JOIN（直積）とカンマ記法
@@ -144,13 +146,14 @@ FROM table_a a, table_b b;
 
 ### 5. 自己結合
 
-同じテーブルを2回使って結合します。上司・部下の関係を取得するときに使います。
+同じテーブルを2回使って結合します。親子関係や上司・部下の関係を取得するときに使います。
 テーブルエイリアスで区別します。
 
 ```sql
-SELECT e.name AS 社員名, m.name AS 上司名
-FROM employees e
-INNER JOIN employees m ON e.manager_id = m.id;
+-- categories テーブル（id, name, parent_id）を自己結合
+SELECT c.name AS カテゴリ名, p.name AS 親カテゴリ名
+FROM categories c
+INNER JOIN categories p ON c.parent_id = p.id;
 ```
 
 ---

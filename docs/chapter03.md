@@ -17,52 +17,54 @@
 
 ## 基礎知識
 
+> **例で使うテーブルについて:** 以下の例では架空の `books`（書籍）テーブルを使います。演習問題で使う `employees` テーブルとは異なりますが、SQL の書き方は同じです。
+
 ### 1. ORDER BY
 
 `ORDER BY` で結果を並び替えます。デフォルトは昇順（`ASC`）です。
 
 ```sql
-SELECT name, salary FROM employees ORDER BY salary;        -- 昇順（安い順）
-SELECT name, salary FROM employees ORDER BY salary DESC;   -- 降順（高い順）
-SELECT name, salary FROM employees ORDER BY salary ASC;    -- 明示的に昇順
+SELECT title, price FROM books ORDER BY price;        -- 昇順（安い順）
+SELECT title, price FROM books ORDER BY price DESC;   -- 降順（高い順）
+SELECT title, price FROM books ORDER BY price ASC;    -- 明示的に昇順
 ```
 
-昇順（`ORDER BY salary`）の場合:
+昇順（`ORDER BY price`）の場合:
 
-| name   | salary |
-|--------|--------|
-| 昭二   | 45000  |
-| あかね | 48000  |
-| 悠介   | 50000  |
-| …      | …      |
+| title          | price |
+|----------------|-------|
+| 料理の基礎     | 1500  |
+| 英語文法       | 1800  |
+| イラスト技法   | 2200  |
+| …              | …     |
 
-降順（`ORDER BY salary DESC`）の場合:
+降順（`ORDER BY price DESC`）の場合:
 
-| name | salary |
-|------|--------|
-| 健太 | 80000  |
-| 花子 | 75000  |
-| 由子 | 65000  |
-| …    | …      |
+| title          | price |
+|----------------|-------|
+| データ分析実践 | 3800  |
+| Python基礎     | 3200  |
+| 写真撮影術     | 2900  |
+| …              | …     |
 
 ### 2. 複数カラムでの並び替え
 
 カンマ区切りで優先順位を指定します。
 
 ```sql
--- dept_id 昇順、同じ dept_id なら salary 降順
-SELECT name, dept_id, salary
-FROM employees
-ORDER BY dept_id ASC, salary DESC;
+-- genre_id 昇順、同じ genre_id なら price 降順
+SELECT title, genre_id, price
+FROM books
+ORDER BY genre_id ASC, price DESC;
 ```
 
-| name | dept_id | salary |
-|------|---------|--------|
-| 健太 | 1       | 80000  |
-| 花子 | 1       | 75000  |
-| 一郎 | 1       | 60000  |
-| 美子 | 2       | 55000  |
-| …    | …       | …      |
+| title          | genre_id | price |
+|----------------|----------|-------|
+| データ分析実践 | 1        | 3800  |
+| Python基礎     | 1        | 3200  |
+| SQL入門        | 1        | 2800  |
+| デザイン入門   | 2        | 2500  |
+| …              | …        | …     |
 
 ### 3. NULL の扱い
 
@@ -72,8 +74,8 @@ PostgreSQL では、`ORDER BY ... ASC` のとき NULL は末尾に来ます（`N
 明示的に指定することもできます。
 
 ```sql
-ORDER BY dept_id ASC NULLS LAST    -- NULL を末尾に（デフォルト）
-ORDER BY dept_id ASC NULLS FIRST   -- NULL を先頭に
+ORDER BY genre_id ASC NULLS LAST    -- NULL を末尾に（デフォルト）
+ORDER BY genre_id ASC NULLS FIRST   -- NULL を先頭に
 ```
 
 ### 4. LIMIT
@@ -81,30 +83,30 @@ ORDER BY dept_id ASC NULLS FIRST   -- NULL を先頭に
 取得する行数の上限を指定します。
 
 ```sql
--- 給与トップ3だけを取得
-SELECT name, salary FROM employees ORDER BY salary DESC LIMIT 3;
+-- 価格が高い上位3冊だけを取得
+SELECT title, price FROM books ORDER BY price DESC LIMIT 3;
 ```
 
-| name | salary |
-|------|--------|
-| 健太 | 80000  |
-| 花子 | 75000  |
-| 由子 | 65000  |
+| title          | price |
+|----------------|-------|
+| データ分析実践 | 3800  |
+| Python基礎     | 3200  |
+| 写真撮影術     | 2900  |
 
 ### 5. OFFSET
 
 先頭から何行スキップするかを指定します。`LIMIT` と組み合わせてページネーションに使います。
 
 ```sql
--- 4番目〜6番目に給与が高い社員（先頭3件をスキップ）
-SELECT name, salary FROM employees ORDER BY salary DESC LIMIT 3 OFFSET 3;
+-- 4番目〜6番目に価格が高い書籍（先頭3件をスキップ）
+SELECT title, price FROM books ORDER BY price DESC LIMIT 3 OFFSET 3;
 ```
 
-| name | salary |
-|------|--------|
-| 一郎 | 60000  |
-| 京子 | 58000  |
-| 美子 | 55000  |
+| title          | price |
+|----------------|-------|
+| SQL入門        | 2800  |
+| デザイン入門   | 2500  |
+| イラスト技法   | 2200  |
 
 ---
 

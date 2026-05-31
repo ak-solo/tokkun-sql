@@ -17,6 +17,8 @@
 
 ## 基礎知識
 
+> **例で使うテーブルについて:** 以下の例では架空の `books`（書籍）テーブルを使います。演習問題で使う `employees` テーブルとは異なりますが、SQL の書き方は同じです。
+
 ### 1. 集計関数
 
 | 関数          | 意味                         |
@@ -29,31 +31,30 @@
 | `MAX(col)`    | 最大値                       |
 
 ```sql
-SELECT COUNT(*), SUM(salary), ROUND(AVG(salary)) FROM employees;
+SELECT COUNT(*), SUM(price), ROUND(AVG(price)) FROM books;
 ```
 
-| count | sum    | round |
-|-------|--------|-------|
-| 10    | 588000 | 58800 |
+| count | sum   | round |
+|-------|-------|-------|
+| 8     | 18800 | 2686  |
 
 ### 2. GROUP BY
 
 指定したカラムの値ごとにグループ化して集計します。
 
 ```sql
--- 部署ごとの社員数
-SELECT dept_id, COUNT(*) AS 社員数
-FROM employees
-GROUP BY dept_id;
+-- ジャンルごとの冊数
+SELECT genre_id, COUNT(*) AS 冊数
+FROM books
+GROUP BY genre_id;
 ```
 
-| dept_id | 社員数 |
-|---------|--------|
-| 1       | 3      |
-| 2       | 2      |
-| 3       | 2      |
-| 4       | 2      |
-| NULL    | 1      |
+| genre_id | 冊数 |
+|----------|------|
+| 1        | 3    |
+| 2        | 2    |
+| 3        | 2    |
+| NULL     | 1    |
 
 > `GROUP BY` を使うと、`SELECT` に書けるのは **グループ化したカラム** か **集計関数** だけです。
 
@@ -62,19 +63,18 @@ GROUP BY dept_id;
 `GROUP BY` 後のグループに条件を付けるときに使います。
 
 ```sql
--- 社員数が 2 人以上の部署だけを表示
-SELECT dept_id, COUNT(*) AS 社員数
-FROM employees
-GROUP BY dept_id
+-- 冊数が 2 冊以上のジャンルだけを表示
+SELECT genre_id, COUNT(*) AS 冊数
+FROM books
+GROUP BY genre_id
 HAVING COUNT(*) >= 2;
 ```
 
-| dept_id | 社員数 |
-|---------|--------|
-| 1       | 3      |
-| 2       | 2      |
-| 3       | 2      |
-| 4       | 2      |
+| genre_id | 冊数 |
+|----------|------|
+| 1        | 3    |
+| 2        | 2    |
+| 3        | 2    |
 
 ### 4. WHERE と HAVING の違い
 
@@ -85,20 +85,19 @@ HAVING COUNT(*) >= 2;
 
 ```sql
 -- WHERE で先に NULL を除外し、その後グループ化
-SELECT dept_id, COUNT(*) AS 社員数, SUM(salary) AS 給与合計
-FROM employees
-WHERE dept_id IS NOT NULL
-GROUP BY dept_id
+SELECT genre_id, COUNT(*) AS 冊数, SUM(price) AS 合計金額
+FROM books
+WHERE genre_id IS NOT NULL
+GROUP BY genre_id
 HAVING COUNT(*) >= 2
-ORDER BY dept_id;
+ORDER BY genre_id;
 ```
 
-| dept_id | 社員数 | 給与合計 |
-|---------|--------|---------|
-| 1       | 3      | 215000  |
-| 2       | 2      | 105000  |
-| 3       | 2      | 123000  |
-| 4       | 2      | 100000  |
+| genre_id | 冊数 | 合計金額 |
+|----------|------|---------|
+| 1        | 3    | 9800    |
+| 2        | 2    | 4700    |
+| 3        | 2    | 4700    |
 
 ---
 

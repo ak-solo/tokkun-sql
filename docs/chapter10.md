@@ -30,18 +30,20 @@ employees, departments
 
 ### 2. CREATE VIEW
 
+> **例で使うテーブルについて:** 以下の例では架空の `books`（書籍）・`genres`（ジャンル）テーブルを使います。演習問題で使うテーブルとは異なりますが、VIEW の書き方は同じです。
+
 ```sql
-CREATE VIEW emp_dept AS
-SELECT e.name, d.name AS 部署名, e.salary
-FROM employees e
-LEFT JOIN departments d ON e.dept_id = d.id;
+CREATE VIEW book_genre_view AS
+SELECT b.title, g.name AS ジャンル名, b.price
+FROM books b
+LEFT JOIN genres g ON b.genre_id = g.id;
 ```
 
 作成後は通常のテーブルと同様に `SELECT` できます。
 
 ```sql
-SELECT * FROM emp_dept;
-SELECT * FROM emp_dept WHERE salary > 60000;
+SELECT * FROM book_genre_view;
+SELECT * FROM book_genre_view WHERE price > 3000;
 ```
 
 > `\dv` でビューの一覧、`\d ビュー名` でビューの定義を確認できます。
@@ -52,10 +54,10 @@ SELECT * FROM emp_dept WHERE salary > 60000;
 同じスクリプトを何度でも実行できるよう、演習では `CREATE OR REPLACE VIEW` を使います。
 
 ```sql
-CREATE OR REPLACE VIEW emp_dept AS
-SELECT e.id, e.name, d.name AS 部署名, e.salary  -- id カラムを追加
-FROM employees e
-LEFT JOIN departments d ON e.dept_id = d.id;
+CREATE OR REPLACE VIEW book_genre_view AS
+SELECT b.id, b.title, g.name AS ジャンル名, b.price  -- id カラムを追加
+FROM books b
+LEFT JOIN genres g ON b.genre_id = g.id;
 ```
 
 > **注意:** PostgreSQL では既存カラムの削除・順序変更を伴う変更は `CREATE OR REPLACE VIEW` では行えません。そのような場合は `DROP VIEW` してから `CREATE VIEW` し直します。
@@ -63,9 +65,9 @@ LEFT JOIN departments d ON e.dept_id = d.id;
 ### 4. DROP VIEW
 
 ```sql
-DROP VIEW emp_dept;
-DROP VIEW IF EXISTS emp_dept;                   -- 存在しない場合もエラーにしない
-DROP VIEW IF EXISTS emp_dept, dept_stats;        -- 複数まとめて削除
+DROP VIEW book_genre_view;
+DROP VIEW IF EXISTS book_genre_view;                          -- 存在しない場合もエラーにしない
+DROP VIEW IF EXISTS book_genre_view, genre_stats_view;        -- 複数まとめて削除
 ```
 
 ---

@@ -32,6 +32,8 @@
 
 ## 基礎知識
 
+> **例で使うテーブルについて:** 以下の例では架空の `books`（書籍）テーブルを使います。演習問題で使う `employees` テーブルとは異なりますが、SQL の書き方は同じです。
+
 ### 1. SELECT 文の基本構文
 
 ```sql
@@ -41,30 +43,30 @@ SELECT カラム1, カラム2 FROM テーブル名;
 SQL の基本は「**どのテーブルから（FROM）**」「**何を取得するか（SELECT）**」の2つを指定することです。
 
 ```sql
--- employees テーブルから name と salary を取得する
-SELECT name, salary FROM employees;
+-- books テーブルから title と price を取得する
+SELECT title, price FROM books;
 ```
 
-| name | salary |
-|------|--------|
-| 花子 | 75000  |
-| 一郎 | 60000  |
-| 美子 | 55000  |
-| …    | …      |
+| title          | price |
+|----------------|-------|
+| SQL入門        | 2800  |
+| Python基礎     | 3200  |
+| データ分析実践 | 3800  |
+| …              | …     |
 
 ### 2. 全カラムの取得（`*`）
 
 `*`（アスタリスク）を使うと、すべてのカラムを取得できます。
 
 ```sql
-SELECT * FROM employees;
+SELECT * FROM books;
 ```
 
-| id | name | dept_id | salary | hire_date  | manager_id |
-|----|------|---------|--------|------------|------------|
-|  1 | 花子 | 1       | 75000  | 2020-04-01 | NULL       |
-|  2 | 一郎 | 1       | 60000  | 2021-06-15 | 1          |
-| …  | …    | …       | …      | …          | …          |
+| id | title          | genre_id | price |
+|----|----------------|----------|-------|
+|  1 | SQL入門        | 1        | 2800  |
+|  2 | Python基礎     | 1        | 3200  |
+| …  | …              | …        | …     |
 
 探索や確認には便利ですが、本番コードでは必要なカラムを明示するのが一般的です。
 
@@ -74,61 +76,60 @@ SELECT * FROM employees;
 日本語のカラム名を使いたいときや、計算結果に名前をつけるときに便利です。
 
 ```sql
-SELECT name AS 氏名, salary AS 給与 FROM employees;
+SELECT title AS タイトル, price AS 価格 FROM books;
 ```
 
-| 氏名 | 給与  |
-|------|-------|
-| 花子 | 75000 |
-| 一郎 | 60000 |
-| 美子 | 55000 |
-| …    | …     |
+| タイトル       | 価格  |
+|----------------|-------|
+| SQL入門        | 2800  |
+| Python基礎     | 3200  |
+| データ分析実践 | 3800  |
+| …              | …     |
 
 ### 4. 文字列結合（`||`）
 
 PostgreSQL では `||` 演算子で文字列を結合できます。
 
 ```sql
-SELECT name || 'さん' AS 敬称 FROM employees;
+SELECT title || '（在庫あり）' AS 表示名 FROM books;
 ```
 
-| 敬称     |
-|----------|
-| 花子さん |
-| 一郎さん |
-| 美子さん |
-| …        |
+| 表示名                    |
+|---------------------------|
+| SQL入門（在庫あり）       |
+| Python基礎（在庫あり）    |
+| データ分析実践（在庫あり）|
+| …                         |
 
 ### 5. 計算式
 
 SELECT の中で四則演算を使えます。
 
 ```sql
-SELECT name, salary * 1.1 AS 昇給後の給与 FROM employees;
+SELECT title, price * 1.1 AS 税込価格 FROM books;
 ```
 
-| name | 昇給後の給与 |
-|------|-------------|
-| 花子 | 82500.0     |
-| 一郎 | 66000.0     |
-| 美子 | 60500.0     |
-| …    | …           |
+| title          | 税込価格 |
+|----------------|----------|
+| SQL入門        | 3080.0   |
+| Python基礎     | 3520.0   |
+| データ分析実践 | 4180.0   |
+| …              | …        |
 
 ### 6. DISTINCT による重複除去
 
 `DISTINCT` を使うと重複した値を取り除いた結果が得られます。
 
 ```sql
-SELECT DISTINCT dept_id FROM employees;
+SELECT DISTINCT genre_id FROM books;
 ```
 
-| dept_id |
-|---------|
-| 1       |
-| 2       |
-| 3       |
-| 4       |
-| NULL    |
+| genre_id |
+|----------|
+| 1        |
+| 2        |
+| 3        |
+| NULL     |
 
 ---
 
