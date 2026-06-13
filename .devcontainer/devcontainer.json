@@ -9,7 +9,8 @@
       "extensions": [
         "mtxr.sqltools",
         "mtxr.sqltools-driver-pg",
-        "inferrinizzard.prettier-sql-vscode"
+        "inferrinizzard.prettier-sql-vscode",
+        "shd101wyy.markdown-preview-enhanced"
       ],
       "settings": {
         "sqltools.connections": [
