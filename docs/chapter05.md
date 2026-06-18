@@ -21,12 +21,7 @@
 
 テーブル間の関係：
 
-```
-employees.dept_id    → departments.id
-employees.manager_id → employees.id   （自己参照）
-employee_projects.employee_id → employees.id
-employee_projects.project_id  → projects.id
-```
+![テーブル間の外部キー参照](images/ch05-table-relations.svg)
 
 ---
 

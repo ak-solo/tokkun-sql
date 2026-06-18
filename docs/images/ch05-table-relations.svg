@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="200" viewBox="0 0 520 200">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- Row 1: employees.dept_id → departments.id -->
+  <rect x="15" y="23" width="80" height="22" rx="3" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1"/>
+  <text x="55" y="34" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#333">employees</text>
+  <text x="101" y="34" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">.dept_id</text>
+  <line x1="247" y1="34" x2="293" y2="34" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="300" y="23" width="102" height="22" rx="3" fill="#e1d5e7" stroke="#9673a6" stroke-width="1"/>
+  <text x="351" y="34" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#333">departments</text>
+  <text x="408" y="34" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">.id</text>
+
+  <!-- Row 2: employees.manager_id → employees.id  (自己参照) -->
+  <rect x="15" y="67" width="80" height="22" rx="3" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1"/>
+  <text x="55" y="78" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#333">employees</text>
+  <text x="101" y="78" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">.manager_id</text>
+  <line x1="247" y1="78" x2="293" y2="78" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="300" y="67" width="80" height="22" rx="3" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1"/>
+  <text x="340" y="78" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#333">employees</text>
+  <text x="386" y="78" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">.id</text>
+  <text x="414" y="78" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="10" fill="#888">（自己参照）</text>
+
+  <!-- Row 3: employee_projects.employee_id → employees.id -->
+  <rect x="15" y="111" width="136" height="22" rx="3" fill="#d5e8d4" stroke="#82b366" stroke-width="1"/>
+  <text x="83" y="122" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#333">employee_projects</text>
+  <text x="157" y="122" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">.employee_id</text>
+  <line x1="247" y1="122" x2="293" y2="122" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="300" y="111" width="80" height="22" rx="3" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1"/>
+  <text x="340" y="122" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#333">employees</text>
+  <text x="386" y="122" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">.id</text>
+
+  <!-- Row 4: employee_projects.project_id → projects.id -->
+  <rect x="15" y="155" width="136" height="22" rx="3" fill="#d5e8d4" stroke="#82b366" stroke-width="1"/>
+  <text x="83" y="166" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#333">employee_projects</text>
+  <text x="157" y="166" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">.project_id</text>
+  <line x1="247" y1="166" x2="293" y2="166" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="300" y="155" width="72" height="22" rx="3" fill="#fff2cc" stroke="#d6b656" stroke-width="1"/>
+  <text x="336" y="166" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="11" fill="#333">projects</text>
+  <text x="378" y="166" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">.id</text>
+</svg>

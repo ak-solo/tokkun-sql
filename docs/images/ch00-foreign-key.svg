@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="160" viewBox="0 0 520 160">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- departments table -->
+  <rect x="20" y="25" width="175" height="92" rx="4" fill="white" stroke="#9673a6" stroke-width="1.5"/>
+  <rect x="21" y="26" width="173" height="35" rx="3" fill="#e1d5e7"/>
+  <text x="108" y="44" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333">departments</text>
+  <line x1="20" y1="61" x2="195" y2="61" stroke="#9673a6" stroke-width="1"/>
+  <rect x="21" y="62" width="173" height="27" fill="#f0eaf5"/>
+  <text x="108" y="75" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#333">id  (PK)</text>
+  <line x1="20" y1="89" x2="195" y2="89" stroke="#9673a6" stroke-width="1"/>
+  <text x="108" y="103" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">name</text>
+
+  <!-- employees table -->
+  <rect x="330" y="25" width="175" height="120" rx="4" fill="white" stroke="#6c8ebf" stroke-width="1.5"/>
+  <rect x="331" y="26" width="173" height="35" rx="3" fill="#dae8fc"/>
+  <text x="417" y="44" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#333">employees</text>
+  <line x1="330" y1="61" x2="505" y2="61" stroke="#6c8ebf" stroke-width="1"/>
+  <rect x="331" y="62" width="173" height="27" fill="#fff3cc"/>
+  <text x="417" y="75" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#333">dept_id  (FK)</text>
+  <line x1="330" y1="89" x2="505" y2="89" stroke="#6c8ebf" stroke-width="1"/>
+  <text x="417" y="103" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">name</text>
+  <line x1="330" y1="117" x2="505" y2="117" stroke="#6c8ebf" stroke-width="1"/>
+  <text x="417" y="131" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="12" fill="#555">salary</text>
+
+  <!-- Arrow: employees.dept_id references departments.id -->
+  <line x1="328" y1="75" x2="197" y2="75" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="262" y="67" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="10" fill="#666">参照</text>
+</svg>
